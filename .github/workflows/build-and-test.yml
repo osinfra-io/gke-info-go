@@ -45,7 +45,6 @@ jobs:
       - name: Build
         uses: docker/build-push-action@v5.3.0
         with:
-          context: gke-info-go
           tags: |
             ghcr.io/osinfra-io/gke-info-go:test
           cache-from: type=gha
