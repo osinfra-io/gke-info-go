@@ -9,9 +9,9 @@ permissions:
   packages: write
 
 jobs:
-  build-and-push-gke-info-go:
+  build-and-push:
     name: Build and Push GKE Info Go
-    runs-on: gke-info-go-latest
+    runs-on: ubuntu-latest
     env:
       VERSION: ${{ github.event.release.tag_name }}
 
@@ -41,7 +41,7 @@ jobs:
       # Build and Push Docker to GitHub Container Registry
       # https://github.com/marketplace/actions/build-and-push-docker-images
 
-      - name: Build and Push GKE Info Go to GitHub Container Registry
+      - name: Build and Push GitHub Container Registry
         uses: docker/build-push-action@v5.3.0
         with:
           tags: |

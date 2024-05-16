@@ -11,10 +11,10 @@ permissions:
   packages: write
 
 jobs:
-  build-and-test-gke-info-go:
-    name: Build and Test GKE Info Go
+  build-and-test:
+    name: Build and Test
     if: ${{ github.actor != 'dependabot[bot]' }}
-    runs-on: gke-info-go-latest
+    runs-on: ubuntu-latest
 
     steps:
       # Checkout
@@ -42,7 +42,7 @@ jobs:
       # Build and Test Docker images
       # https://github.com/marketplace/actions/build-and-push-docker-images
 
-      - name: Build and Test GKE Info Go
+      - name: Build
         uses: docker/build-push-action@v5.3.0
         with:
           context: gke-info-go
@@ -52,6 +52,6 @@ jobs:
           cache-to: type=gha,mode=max
           load: true
 
-      - name: Test GKE Info Go
+      - name: Test
         run: |
           docker run --rm ghcr.io/osinfra-io/gke-info-go:test
