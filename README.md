@@ -25,13 +25,11 @@ spec:
   selector:
     matchLabels:
       app: gke-info-go
-      version: v1
 
   template:
     metadata:
       labels:
         app: gke-info-go
-        version: v1
 
     spec:
       containers:
@@ -44,11 +42,11 @@ spec:
 
           resources:
             limits:
-              cpu: "100m"
-              memory: "256Mi"
-            requests:
               cpu: "50m"
               memory: "128Mi"
+            requests:
+              cpu: "25m"
+              memory: "64Mi"
 
 ---
 apiVersion: v1
@@ -60,7 +58,6 @@ metadata:
 
   labels:
     app: gke-info-go
-    version: v1
 
 spec:
   ports:
