@@ -53,4 +53,4 @@ jobs:
 
       - name: Test
         run: |
-          docker run --rm ghcr.io/osinfra-io/gke-info-go:test
+          docker run --rm ghcr.io/osinfra-io/gke-info-go:test go version
