@@ -1,4 +1,4 @@
-module gke-info-go
+module gke-info
 
 go 1.22.3
 
