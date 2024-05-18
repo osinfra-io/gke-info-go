@@ -9,7 +9,7 @@ WORKDIR /app
 
 COPY main.go .
 
-RUN go mod init gke-status
+RUN go mod init gke-info-go
 RUN go mod tidy
 RUN go build -o main .
 

@@ -1,8 +1,8 @@
-module gke-status
+module gke-info-go
 
-go 1.21.1
+go 1.22.3
 
-require gopkg.in/DataDog/dd-trace-go.v1 v1.63.1
+require gopkg.in/DataDog/dd-trace-go.v1 v1.64.0
 
 require (
 	github.com/DataDog/datadog-go/v5 v5.3.0 // indirect
