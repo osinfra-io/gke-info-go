@@ -10,6 +10,12 @@ import (
 )
 
 func getClusterInfo(w http.ResponseWriter, _ *http.Request, client *http.Client) {
+	// Check if client is nil
+	if client == nil {
+		http.Error(w, "Client is not initialized", http.StatusInternalServerError)
+		return
+	}
+
 	// GCP metadata URL to retrieve the GKE cluster name
 	metadataURL := "http://metadata.google.internal/computeMetadata/v1/instance/attributes/cluster-name"
 
