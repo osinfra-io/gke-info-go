@@ -12,7 +12,7 @@ import (
 func getClusterInfo(w http.ResponseWriter, _ *http.Request, client *http.Client) {
 	// Check if client is nil
 	if client == nil {
-		http.Error(w, "Client is not initialized", http.StatusInternalServerError)
+		http.Error(w, "HTTP client is nil: cannot proceed with metadata retrieval", http.StatusInternalServerError)
 		return
 	}
 
