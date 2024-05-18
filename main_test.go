@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestGetClusterInfo(t *testing.T) {
+func TestGetClusterInfoHandler(t *testing.T) {
 	// Create a mock HTTP client
 	client := &http.Client{
 		Transport: roundTripperFunc(func(req *http.Request) (*http.Response, error) {
