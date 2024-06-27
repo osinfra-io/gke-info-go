@@ -42,7 +42,7 @@ jobs:
       # https://github.com/marketplace/actions/build-and-push-docker-images
 
       - name: Build and Push GitHub Container Registry
-        uses: docker/build-push-action@v6.1.0
+        uses: docker/build-push-action@v6.2.0
         with:
           tags: |
             ghcr.io/osinfra-io/gke-info-go:${{ env.VERSION }}
