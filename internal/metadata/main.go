@@ -14,7 +14,6 @@ func GetMetadata(w http.ResponseWriter, r *http.Request) {
 
     // Only allow fetching the cluster name for security reasons
     if metadataType == "cluster-name" {
-        metadataURL = "http://metadata.google.internal/computeMetadata/v1/instance/attributes/cluster-name"
     } else {
         http.Error(w, "Request not allowed", http.StatusForbidden)
         return
