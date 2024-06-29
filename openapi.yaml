@@ -1,0 +1,52 @@
+openapi: 3.1.0
+x-datadog:
+  teamHandle: platform-team
+info:
+  title: GKE Info API
+  description: Provides information about the Google Kubernetes Engine (GKE) cluster.
+  version: 1.0.4
+servers:
+  - url: https://sb.gcp.osinfra.io/gke-info
+    description: Sandbox Global Platform Engineering
+  - url: https://pre-prod.gcp.osinfra.io/gke-info
+    description: Pre-Production Global Platform Engineering
+  - url: https://gcp.osinfra.io/gke-info
+    description: Production Global Platform Engineering
+paths:
+  /cluster-name:
+    get:
+      summary: Get GKE cluster name
+      description: Returns the name of the Google Kubernetes Engine (GKE) cluster closest to the service.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "cluster-name-region"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+        code:
+          type: integer
+          description: Error code
+
+# Ensure that the global security field has rules defined
+# checkov:skip=CKV_OPENAPI_4: API is not protected by authentication or authorization
+
+# Ensure that security operations is not empty
+# checkov:skip=CKV_OPENAPI_5: API is not protected by authentication or authorization
+
+security: []
