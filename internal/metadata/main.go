@@ -1,57 +1,87 @@
 package metadata
 
 import (
-        "fmt"
-        "io"
-        "net/http"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"strings"
 )
 
-func GetMetadata(w http.ResponseWriter, r *http.Request) {
-    // Extract the path parameter from the URL
-    metadataType := r.URL.Path[len("/gke-info/"):]
+// Metadata server URLs
+const (
+	clusterNameURL     = "http://metadata.google.internal/computeMetadata/v1/instance/attributes/cluster-name"
+	clusterLocationURL = "http://metadata.google.internal/computeMetadata/v1/instance/attributes/cluster-location"
+	instanceZoneURL    = "http://metadata.google.internal/computeMetadata/v1/instance/zone"
+)
 
-    var metadataURL string
+// fetchMetadata fetches metadata from the provided URL
+func fetchMetadata(url string) (string, error) {
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return "", err
+	}
 
-    // Only allow fetching the cluster name for security reasons
-    if metadataType == "cluster-name" {
-    } else {
-        http.Error(w, "Request not allowed", http.StatusForbidden)
-        return
-    }
+	// Adding the metadata flavor header as required by GCP metadata server
+	req.Header.Add("Metadata-Flavor", "Google")
 
-    // Construct the metadata URL dynamically
-    metadataURL = fmt.Sprintf("http://metadata.google.internal/computeMetadata/v1/instance/attributes/%s", metadataType)
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
 
-    // Set the metadata request headers
-    req, err := http.NewRequest("GET", metadataURL, nil)
-    if err != nil {
-        http.Error(w, fmt.Sprintf("Error creating request: %v", err), http.StatusInternalServerError)
-        return
-    }
-    req.Header.Set("Metadata-Flavor", "Google")
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("failed to get metadata from %s, status code: %d", url, resp.StatusCode)
+	}
 
-    // Send the request to the metadata server
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    if err != nil {
-        http.Error(w, fmt.Sprintf("Error retrieving metadata: %v", err), http.StatusInternalServerError)
-        return
-    }
-    defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
 
-    // Check the response status code
-    if resp.StatusCode != http.StatusOK {
-        http.Error(w, fmt.Sprintf("Error retrieving metadata, status code: %d", resp.StatusCode), http.StatusInternalServerError)
-        return
-    }
+	return string(body), nil
+}
 
-    // Set the Content-Type header to JSON
-    w.Header().Set("Content-Type", "application/json")
+// metadataHandler handles the /metadata/* endpoint
+func MetadataHandler(w http.ResponseWriter, r *http.Request) {
+	pathParts := strings.Split(r.URL.Path, "/")
+	if len(pathParts) < 3 {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
 
-    // Copy the response from the metadata server to the output
-    _, err = io.Copy(w, resp.Body)
-    if err != nil {
-        http.Error(w, fmt.Sprintf("Error writing response: %v", err), http.StatusInternalServerError)
-        return
-    }
+	metadataType := pathParts[2]
+	var url string
+
+	switch metadataType {
+	case "cluster-name":
+		url = clusterNameURL
+	case "cluster-location":
+		url = clusterLocationURL
+	case "instance-zone":
+		url = instanceZoneURL
+	default:
+		http.Error(w, "Unknown metadata type", http.StatusBadRequest)
+		return
+	}
+
+	metadata, err := fetchMetadata(url)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// If instance zone, extract just the zone from the full zone URL
+	if metadataType == "instance-zone" {
+		instanceZoneParts := strings.Split(metadata, "/")
+		if len(instanceZoneParts) > 0 {
+			metadata = instanceZoneParts[len(instanceZoneParts)-1]
+		}
+	}
+
+	response := map[string]string{metadataType: metadata}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 }

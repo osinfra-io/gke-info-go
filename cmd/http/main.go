@@ -1,17 +1,15 @@
 package main
 
 import (
-        "fmt"
-        "log"
-        "net/http"
-        "os"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
 
-        "gke-info/internal/metadata"
-
-        // "gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
-        // "gopkg.in/DataDog/dd-trace-go.v1/profiler"
-
-        // httptrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
+	"gke-info/internal/metadata"
+	// "gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
+	// "gopkg.in/DataDog/dd-trace-go.v1/profiler"
+	// httptrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
 )
 
 // func main() {
@@ -30,7 +28,7 @@ import (
 //         defer profiler.Stop()
 
 //         mux := httptrace.NewServeMux()
-//         mux.HandleFunc("/gke-info", metadata.GetMetadata)
+//         mux.HandleFunc("/metadata", metadata.MetadataHandler)
 
 //         port := "8080"
 //         if envPort := os.Getenv("PORT"); envPort != "" {
@@ -43,14 +41,17 @@ import (
 // }
 
 func main() {
-        http.HandleFunc("/gke-info", metadata.GetMetadata)
+	http.HandleFunc("/metadata", metadata.MetadataHandler)
 
-        port := "8080"
-        if envPort := os.Getenv("PORT"); envPort != "" {
-                port = envPort
-        }
+	port := "8080"
+	if envPort := os.Getenv("PORT"); envPort != "" {
+		port = envPort
+	}
 
-        if err := http.ListenAndServe(fmt.Sprintf(":%s", port), nil); err != nil {
-                log.Fatalf("Failed to start server: %v", err)
-        }
+	log.Printf("Starting server on port %s...\n", port)
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), nil); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
+        // If successful log the message
+        log.Printf("Server started successfully on port %s...\n", port)
 }
