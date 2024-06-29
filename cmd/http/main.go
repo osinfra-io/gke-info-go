@@ -43,15 +43,14 @@ import (
 // }
 
 func main() {
-        mux := http.NewServeMux() // Use standard http.ServeMux
-        mux.HandleFunc("/gke-info", metadata.GetMetadata)
+        http.HandleFunc("/gke-info", metadata.GetMetadata)
 
         port := "8080"
         if envPort := os.Getenv("PORT"); envPort != "" {
                 port = envPort
         }
 
-        if err := http.ListenAndServe(fmt.Sprintf(":%s", port), mux); err != nil {
+        if err := http.ListenAndServe(fmt.Sprintf(":%s", port), nil); err != nil {
                 log.Fatalf("Failed to start server: %v", err)
         }
 }
