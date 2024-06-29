@@ -37,5 +37,7 @@ func main() {
                 port = envPort
         }
 
-        http.ListenAndServe(fmt.Sprintf(":%s", port), mux)
+        if err := http.ListenAndServe(fmt.Sprintf(":%s", port), mux); err != nil {
+                log.Fatalf("Failed to start server: %v", err)
+        }
 }
