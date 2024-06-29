@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -41,7 +40,8 @@ import (
 // }
 
 func main() {
-	http.HandleFunc("/metadata", metadata.MetadataHandler)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/metadata", metadata.MetadataHandler)
 
 	port := "8080"
 	if envPort := os.Getenv("PORT"); envPort != "" {
@@ -49,7 +49,7 @@ func main() {
 	}
 
 	log.Printf("Starting server on port %s...\n", port)
-	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), nil); err != nil {
+	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
 }
