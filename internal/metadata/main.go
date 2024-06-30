@@ -10,13 +10,13 @@ import (
 
 // Metadata server URLs
 const (
-	clusterNameURL     = "http://metadata.google.internal/computeMetadata/v1/instance/attributes/cluster-name"
-	clusterLocationURL = "http://metadata.google.internal/computeMetadata/v1/instance/attributes/cluster-location"
-	instanceZoneURL    = "http://metadata.google.internal/computeMetadata/v1/instance/zone"
+	ClusterNameURL     = "http://metadata.google.internal/computeMetadata/v1/instance/attributes/cluster-name"
+	ClusterLocationURL = "http://metadata.google.internal/computeMetadata/v1/instance/attributes/cluster-location"
+	InstanceZoneURL    = "http://metadata.google.internal/computeMetadata/v1/instance/zone"
 )
 
 // fetchMetadata fetches metadata from the provided URL
-func fetchMetadata(url string) (string, error) {
+var FetchMetadata = func(url string) (string, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return "", err
@@ -57,17 +57,17 @@ func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch metadataType {
 	case "cluster-name":
-		url = clusterNameURL
+		url = ClusterNameURL
 	case "cluster-location":
-		url = clusterLocationURL
+		url = ClusterLocationURL
 	case "instance-zone":
-		url = instanceZoneURL
+		url = InstanceZoneURL
 	default:
 		http.Error(w, "Unknown metadata type", http.StatusBadRequest)
 		return
 	}
 
-	metadata, err := fetchMetadata(url)
+	metadata, err := FetchMetadata(url)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -83,7 +83,6 @@ func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 
 	response := map[string]string{metadataType: metadata}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
