@@ -43,7 +43,7 @@ jobs:
       # https://github.com/marketplace/actions/build-and-push-docker-images
 
       - name: Build
-        uses: docker/build-push-action@v6.2.0
+        uses: docker/build-push-action@v6.3.0
         with:
           tags: |
             ghcr.io/osinfra-io/gke-info-go:test
