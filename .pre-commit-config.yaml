@@ -8,7 +8,7 @@ repos:
       - id: check-symlinks
 
   - repo: https://github.com/bridgecrewio/checkov.git
-    rev: 3.2.156
+    rev: 3.2.174
     hooks:
       - id: checkov
         files: Dockerfile
