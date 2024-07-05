@@ -37,7 +37,7 @@ jobs:
       environment: us-east1-b-sandbox
       github_environment: "Sandbox: Regional - us-east1-b"
       service_account: plt-gke-info-github@ptl-lz-terraform-tf91-sb.iam.gserviceaccount.com
-      terraform_plan_args: -var-file=tfvars/us-east1-b-sandbox.tfvars
+      terraform_plan_args: -var-file=tfvars/us-east1-b-sandbox.tfvars -var=gke_info_go_version=${{ github.sha }}
       terraform_state_bucket: plt-gke-info-2c8b-sb
       terraform_version: ${{ vars.TERRAFORM_VERSION }}
       terraform_workspace: us-east1-b-sandbox
@@ -46,6 +46,9 @@ jobs:
     secrets:
       gpg_passphrase: ${{ secrets.GPG_PASSPHRASE }}
       infracost_api_key: ${{ secrets.INFRACOST_API_KEY }}
+      terraform_plan_secret_args: >-
+        -var=datadog_api_key=${{ secrets.DATADOG_API_KEY }}
+        -var=datadog_app_key=${{ secrets.DATADOG_APP_KEY }}
 
   us_east4_a:
     name: "Sandbox Regional: us-east4-a"
@@ -57,7 +60,7 @@ jobs:
       environment: us-east4-a-sandbox
       github_environment: "Sandbox: Regional - us-east4-a"
       service_account: plt-gke-info-github@ptl-lz-terraform-tf91-sb.iam.gserviceaccount.com
-      terraform_plan_args: -var-file=tfvars/us-east4-a-sandbox.tfvars
+      terraform_plan_args: -var-file=tfvars/us-east4-a-sandbox.tfvars -var=gke_info_go_version=${{ github.sha }}
       terraform_state_bucket: plt-gke-info-2c8b-sb
       terraform_version: ${{ vars.TERRAFORM_VERSION }}
       terraform_workspace: us-east4-a-sandbox
@@ -66,6 +69,9 @@ jobs:
     secrets:
       gpg_passphrase: ${{ secrets.GPG_PASSPHRASE }}
       infracost_api_key: ${{ secrets.INFRACOST_API_KEY }}
+      terraform_plan_secret_args: >-
+        -var=datadog_api_key=${{ secrets.DATADOG_API_KEY }}
+        -var=datadog_app_key=${{ secrets.DATADOG_APP_KEY }}
 
   datadog_synthetic_tests:
     name: "Sandbox: Datadog synthetic tests"
