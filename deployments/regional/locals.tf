@@ -46,7 +46,7 @@ locals {
       region           = "us-east1"
       service          = local.datadog_synthetic_service
 
-      status = var.env == "sb" ? "live" : "paused"
+      status = var.env == "sb" ? "paused" : "paused"
       url    = local.datadog_mci_synthetic_url
     }
 
