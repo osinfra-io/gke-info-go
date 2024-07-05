@@ -11,6 +11,7 @@ import (
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/metadata", metadata.MetadataHandler)
+	mux.HandleFunc("/health", metadata.HealthCheckHandler)
 
 	port := "8080"
 	if envPort := os.Getenv("PORT"); envPort != "" {

@@ -44,6 +44,10 @@ var FetchMetadata = func(url string) (string, error) {
 
 	return string(body), nil
 }
+func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
+    w.WriteHeader(http.StatusOK)
+    w.Write([]byte("OK"))
+}
 
 // metadataHandler handles the /metadata/* endpoint
 func MetadataHandler(w http.ResponseWriter, r *http.Request) {
