@@ -53,7 +53,7 @@ func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
 func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 	pathParts := strings.Split(r.URL.Path, "/")
 	if len(pathParts) < 3 {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
+		http.Error(w, "Invalid request: expected /metadata/{type}", http.StatusBadRequest)
 		return
 	}
 
