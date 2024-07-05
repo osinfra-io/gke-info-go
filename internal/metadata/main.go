@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -44,15 +45,18 @@ var FetchMetadata = func(url string) (string, error) {
 
 	return string(body), nil
 }
+
 func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
-    w.WriteHeader(http.StatusOK)
-    if _, err := w.Write([]byte("OK")); err != nil {
-        http.Error(w, "Failed to write response", http.StatusInternalServerError)
-    }
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write([]byte("OK")); err != nil {
+		http.Error(w, "Failed to write response", http.StatusInternalServerError)
+	}
 }
 
 // metadataHandler handles the /metadata/* endpoint
 func MetadataHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Received request for %s", r.URL.Path)
+
 	pathParts := strings.Split(r.URL.Path, "/")
 	if len(pathParts) < 3 {
 		http.Error(w, "Invalid request: expected /metadata/{type}", http.StatusBadRequest)
@@ -76,7 +80,7 @@ func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 
 	metadata, err := FetchMetadata(url)
 	if err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		http.Error(w, "Failed to fetch metadata", http.StatusInternalServerError)
 		return
 	}
 
