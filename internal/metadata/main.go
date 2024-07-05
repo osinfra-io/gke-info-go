@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 )
 
 // Metadata server URLs
@@ -25,7 +26,7 @@ var FetchMetadata = func(url string) (string, error) {
 	// Adding the metadata flavor header as required by GCP metadata server
 	req.Header.Add("Metadata-Flavor", "Google")
 
-	client := &http.Client{}
+	client := &http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Do(req)
 	if err != nil {
 		return "", err
@@ -69,11 +70,10 @@ func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 
 	metadata, err := FetchMetadata(url)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 		return
 	}
 
-	// If instance zone, extract just the zone from the full zone URL
 	if metadataType == "instance-zone" {
 		instanceZoneParts := strings.Split(metadata, "/")
 		if len(instanceZoneParts) > 0 {
