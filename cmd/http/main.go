@@ -10,7 +10,7 @@ import (
 
 func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/metadata", metadata.MetadataHandler)
+	mux.HandleFunc("/metadata/", metadata.MetadataHandler)
 	mux.HandleFunc("/health", metadata.HealthCheckHandler)
 
 	port := "8080"
