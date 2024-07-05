@@ -146,7 +146,7 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
     }
 
     name      = "gke-info-go"
-    namespace = "gke-info-go"
+    namespace = "gke-info"
   }
 
   spec {
@@ -276,7 +276,7 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
 resource "kubernetes_service_v1" "gke_info_go" {
   metadata {
     name      = "gke-info-go"
-    namespace = "gke-info-go"
+    namespace = "gke-info"
   }
 
   spec {
@@ -296,7 +296,7 @@ resource "kubernetes_service_v1" "gke_info_go" {
 resource "kubernetes_service_v1" "gke_info_go_regional" {
   metadata {
     name      = "gke-info-go-${var.region}"
-    namespace = "gke-info-go"
+    namespace = "gke-info"
   }
 
   spec {
