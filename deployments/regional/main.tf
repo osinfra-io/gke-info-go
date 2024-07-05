@@ -231,7 +231,7 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
 
           liveness_probe {
             http_get {
-              path = "/gke-info-go"
+              path = "/metadata"
               port = "8080"
             }
 
@@ -243,7 +243,7 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
 
           readiness_probe {
             http_get {
-              path = "/gke-info-go"
+              path = "/metadata"
               port = "8080"
             }
 
