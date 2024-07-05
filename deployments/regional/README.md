@@ -35,7 +35,7 @@ No modules.
 | <a name="input_datadog_api_key"></a> [datadog\_api\_key](#input\_datadog\_api\_key) | Datadog API key | `string` | n/a | yes |
 | <a name="input_datadog_app_key"></a> [datadog\_app\_key](#input\_datadog\_app\_key) | Datadog APP key | `string` | n/a | yes |
 | <a name="input_env"></a> [env](#input\_env) | This is the environment suffix for example: sb (Sandbox), pre-prod (Pre-Production), prod (Production) | `string` | `"sb"` | no |
-| <a name="input_gke_info_go_replicas"></a> [gke\_info\_go\_replicas](#input\_gke\_info\_go\_replicas) | The number of replicas for the gke-info deployment | `number` | `3` | no |
+| <a name="input_gke_info_go_replicas"></a> [gke\_info\_go\_replicas](#input\_gke\_info\_go\_replicas) | The number of replicas for the gke-info deployment | `number` | `1` | no |
 | <a name="input_gke_info_go_version"></a> [gke\_info\_go\_version](#input\_gke\_info\_go\_version) | The version of the gke-info deployment | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | The region to deploy the resources into | `string` | n/a | yes |
 | <a name="input_zone"></a> [zone](#input\_zone) | The zone to deploy the resources to | `string` | n/a | yes |

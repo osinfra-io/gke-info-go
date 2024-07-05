@@ -17,7 +17,7 @@ variable "datadog_app_key" {
 variable "gke_info_go_replicas" {
   description = "The number of replicas for the gke-info deployment"
   type        = number
-  default     = 3
+  default     = 1
 }
 
 variable "gke_info_go_version" {
