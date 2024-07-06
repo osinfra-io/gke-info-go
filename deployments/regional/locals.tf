@@ -28,7 +28,7 @@ locals {
       name             = "Istio MCI ${local.datadog_synthetic_name}"
       region           = "global"
       service          = local.datadog_synthetic_service
-      status           = "live"
+      status           = "paused"
       url              = local.datadog_mci_synthetic_url
     }
 
@@ -46,7 +46,7 @@ locals {
       region           = "us-east1"
       service          = local.datadog_synthetic_service
 
-      status = var.env == "sb" ? "paused" : "paused"
+      status = "paused"
       url    = local.datadog_mci_synthetic_url
     }
 
@@ -63,7 +63,7 @@ locals {
       name             = "Istio Ingress ${local.datadog_synthetic_name}"
       region           = "us-east1"
       service          = local.datadog_synthetic_service
-      status           = "live"
+      status           = "paused"
       url              = var.env == "prod" ? "https://us-east1.gcp.osinfra.io/${local.datadog_synthetic_service}" : "https://us-east1.${var.env}.gcp.osinfra.io/${local.datadog_synthetic_service}"
     }
   } : {}
