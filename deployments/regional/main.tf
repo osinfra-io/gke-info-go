@@ -295,7 +295,7 @@ resource "kubernetes_service_v1" "gke_info_go" {
 
 resource "kubernetes_service_v1" "gke_info_go_regional" {
   metadata {
-    name      = "gke-info-go-${var.region}"
+    name      = "gke-info-go-${var.region}-${var.zone}"
     namespace = "gke-info"
   }
 
