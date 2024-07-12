@@ -12,10 +12,26 @@ permissions:
   id-token: write
 
 jobs:
+  run_go_tests:
+    name: "Go: Tests"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '^1.22'
+
+      - name: Run tests
+        run: go test ./...
+
   build_and_push_us:
     name: "Sandbox Registry: us-docker.pkg.dev"
     uses: osinfra-io/github-misc-called-workflows/.github/workflows/build-and-push.yml@v0.1.5
     if: github.actor != 'dependabot[bot]'
+    needs: run_go_tests
     with:
       cache_from: type=gha
       cache_to: type=gha,mode=max
