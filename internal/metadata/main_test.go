@@ -60,10 +60,10 @@ func TestMetadataHandler(t *testing.T) {
 		expectedBody string
 		isJSON       bool
 	}{
-		{"/metadata/cluster-name", http.StatusOK, `{"cluster-name":"test-cluster-name"}`, true},
-		{"/metadata/cluster-location", http.StatusOK, `{"cluster-location":"test-cluster-location"}`, true},
-		{"/metadata/instance-zone", http.StatusOK, `{"instance-zone":"us-central1-a"}`, true},
-		{"/metadata/unknown", http.StatusBadRequest, "Unknown metadata type", false},
+		{"/gke-info-go/metadata/cluster-name", http.StatusOK, `{"cluster-name":"test-cluster-name"}`, true},
+		{"/gke-info-go/metadata/cluster-location", http.StatusOK, `{"cluster-location":"test-cluster-location"}`, true},
+		{"/gke-info-go/metadata/instance-zone", http.StatusOK, `{"instance-zone":"us-central1-a"}`, true},
+		{"/gke-info-go/metadata/unknown", http.StatusBadRequest, "Unknown metadata type", false},
 	}
 
 	for _, test := range tests {

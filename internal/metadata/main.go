@@ -63,13 +63,13 @@ func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Received request for %s", r.URL.Path)
 
 	pathParts := strings.Split(r.URL.Path, "/")
-	if len(pathParts) < 3 {
+	if len(pathParts) < 4 {
 		log.Printf("Invalid request: %s", r.URL.Path)
-		http.Error(w, "Invalid request: expected /metadata/{type}", http.StatusBadRequest)
+		http.Error(w, "Invalid request: expected /gke-info-go/metadata/{type}", http.StatusBadRequest)
 		return
 	}
 
-	metadataType := pathParts[2]
+	metadataType := pathParts[3]
 	var url string
 
 	switch metadataType {
