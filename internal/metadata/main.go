@@ -58,7 +58,7 @@ func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// MetadataHandler handles the /metadata/* endpoint and fetches the requested metadata.
+// MetadataHandler handles the /gke-info-go/metadata/* endpoint and fetches the requested metadata.
 func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Received request for %s", r.URL.Path)
 

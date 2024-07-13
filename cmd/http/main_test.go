@@ -15,7 +15,7 @@ import (
 func TestMain(t *testing.T) {
 	// Set up a test server
 	mux := http.NewServeMux()
-	mux.HandleFunc("/metadata/", metadata.MetadataHandler)
+	mux.HandleFunc("/gke-info-go/metadata/", metadata.MetadataHandler)
 
 	ts := httptest.NewServer(mux)
 	defer ts.Close()
@@ -31,10 +31,10 @@ func TestMain(t *testing.T) {
 		expectedBody string
 		isJSON       bool
 	}{
-		{ts.URL + "/metadata/cluster-name", http.StatusOK, `{"cluster-name":"test-cluster-name"}`, true},
-		{ts.URL + "/metadata/cluster-location", http.StatusOK, `{"cluster-location":"test-cluster-location"}`, true},
-		{ts.URL + "/metadata/instance-zone", http.StatusOK, `{"instance-zone":"us-central1-a"}`, true},
-		{ts.URL + "/metadata/unknown", http.StatusBadRequest, "Unknown metadata type\n", false},
+		{ts.URL + "/gke-info-go/metadata/cluster-name", http.StatusOK, `{"cluster-name":"test-cluster-name"}`, true},
+		{ts.URL + "/gke-info-go/metadata/cluster-location", http.StatusOK, `{"cluster-location":"test-cluster-location"}`, true},
+		{ts.URL + "/gke-info-go/metadata/instance-zone", http.StatusOK, `{"instance-zone":"us-central1-a"}`, true},
+		{ts.URL + "/gke-info-go/metadata/unknown", http.StatusBadRequest, "Unknown metadata type\n", false},
 	}
 
 	// Mock FetchMetadata for the tests
