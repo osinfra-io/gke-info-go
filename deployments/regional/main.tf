@@ -300,7 +300,7 @@ resource "kubernetes_service_v1" "gke_info_go_regional" {
   }
 
   spec {
-    cluster_ip = "None"
+    type = "ClusterIP"
     selector = {
       app = "gke-info-go"
     }
