@@ -15,8 +15,8 @@ import (
 // main initializes the HTTP server and sets up the routes.
 func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/metadata/", metadata.MetadataHandler)
-	mux.HandleFunc("/health", metadata.HealthCheckHandler)
+	mux.HandleFunc("/gke-info-go/metadata/", metadata.MetadataHandler)
+	mux.HandleFunc("/gke-info-go/health", metadata.HealthCheckHandler)
 
 	port := "8080"
 	if envPort := os.Getenv("PORT"); envPort != "" {
