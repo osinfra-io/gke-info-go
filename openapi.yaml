@@ -1,47 +1,78 @@
 openapi: 3.1.0
 x-datadog:
-  teamHandle: platform-team
+  teamHandle: platform-google-cloud-kubernetes
+
 info:
-  title: GKE Info API
+  title: GKE Info Go
   description: Provides information about the Google Kubernetes Engine (GKE) cluster.
-  version: 1.0.4
+  version: v0.2.1
+
 servers:
   - url: https://sb.gcp.osinfra.io/gke-info
-    description: Sandbox Global Platform Engineering
+    description: Sandbox Global
   - url: https://pre-prod.gcp.osinfra.io/gke-info
-    description: Pre-Production Global Platform Engineering
+    description: Pre-Production Global
   - url: https://gcp.osinfra.io/gke-info
-    description: Production Global Platform Engineering
+    description: Production Global
+
 paths:
-  /cluster-name:
+  /health:
     get:
-      summary: Get GKE cluster name
-      description: Returns the name of the Google Kubernetes Engine (GKE) cluster closest to the service.
+      summary: Health Check
+      description: Responds with a simple "OK" to indicate the service is healthy.
       responses:
-        "200":
-          description: Successful operation
+        '200':
+          description: Service is healthy
           content:
             text/plain:
               schema:
                 type: string
-                example: "cluster-name-region"
-        "500":
-          description: Internal Server Error
+                example: OK
+
+  /gke-info-go/metadata/{type}:
+    get:
+      summary: Fetch Metadata
+      description: Fetches the requested metadata based on the type.
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - cluster-name
+              - cluster-location
+              - instance-zone
+          description: The type of metadata to fetch.
+
+      responses:
+        '200':
+          description: Metadata fetched successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-components:
-  schemas:
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
-          description: Error message
-        code:
-          type: integer
-          description: Error code
+                type: object
+                properties:
+                  data:
+                    type: string
+        '400':
+          description: Invalid request or unknown metadata type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
 # Ensure that the global security field has rules defined
 # checkov:skip=CKV_OPENAPI_4: API is not protected by authentication or authorization
