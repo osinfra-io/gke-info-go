@@ -1,6 +1,6 @@
 # GKE Info Go
 
-[![Docker Build and Test](https://github.com/osinfra-io/gke-info-go/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/osinfra-io/gke-info-go/actions/workflows/build-and-test.yml) [![Docker Build and Push](https://github.com/osinfra-io/gke-info-go/actions/workflows/build-and-push.yml/badge.svg)](https://github.com/osinfra-io/gke-info-go/actions/workflows/build-and-push.yml)
+An example Go application that shows information about the Google Kubernetes Engine (GKE) cluster.
 
 ## Usage
 
