@@ -2,20 +2,26 @@ apiVersion: v3
 kind: service
 metadata:
   name: gke-info-go
+  description: An example Go application that shows information about the Google Kubernetes Engine (GKE) cluster.
   displayName: GKE Info Go
 
   links:
-    - name: Sandbox Global Platform Engineering
+    - name: Sandbox Global
       type: other
       url: "https://sb.gcp.osinfra.io/gke-info"
 
-    - name: Pre-Production Global Platform Engineering
+    - name: Pre-Production Global
       type: other
       url: "https://pre-prod.gcp.osinfra.io/gke-info"
 
-    - name: Production Global Platform Engineering
+    - name: Production Global
       type: other
       url: "https://gcp.osinfra.io/gke-info"
+
+    - name: osinfra-io/gke-info-go
+      type: repo
+      provider: github
+      url: https://github.com/osinfra-io/gke-info-go
 
   owner: platform-google-cloud-kubernetes
 
@@ -27,7 +33,11 @@ spec:
     - go
   dependsOn:
     - service:istio-gateway
+
 datadog:
   performanceData:
     tags:
       - 'service:gke-info-go'
+  pipelines:
+    fingerprints:
+      - NabNkdMuNLxT
