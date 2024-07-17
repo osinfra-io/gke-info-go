@@ -1,0 +1,33 @@
+apiVersion: v3
+kind: service
+metadata:
+  name: gke-info-go
+  displayName: GKE Info Go
+
+  links:
+    - name: Sandbox Global Platform Engineering
+      type: other
+      url: "https://sb.gcp.osinfra.io/gke-info"
+
+    - name: Pre-Production Global Platform Engineering
+      type: other
+      url: "https://pre-prod.gcp.osinfra.io/gke-info"
+
+    - name: Production Global Platform Engineering
+      type: other
+      url: "https://gcp.osinfra.io/gke-info"
+
+  owner: platform-google-cloud-kubernetes
+
+spec:
+  lifecycle: production
+  tier: Zero
+  type: web
+  languages:
+    - go
+  dependsOn:
+    - service:istio-gateway
+datadog:
+  performanceData:
+    tags:
+      - 'service:gke-info-go'
