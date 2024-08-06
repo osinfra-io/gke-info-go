@@ -45,7 +45,7 @@ jobs:
 
   us_east1_b:
     name: "Sandbox Regional: us-east1-b"
-    uses: osinfra-io/github-terraform-gcp-called-workflows/.github/workflows/plan-and-apply.yml@v0.2.4
+    uses: osinfra-io/github-terraform-gcp-called-workflows/.github/workflows/plan-and-apply.yml@v0.2.5
     if: github.actor != 'dependabot[bot]'
     needs: build_and_push_us
     with:
@@ -68,7 +68,7 @@ jobs:
 
   us_east4_a:
     name: "Sandbox Regional: us-east4-a"
-    uses: osinfra-io/github-terraform-gcp-called-workflows/.github/workflows/plan-and-apply.yml@v0.2.4
+    uses: osinfra-io/github-terraform-gcp-called-workflows/.github/workflows/plan-and-apply.yml@v0.2.5
     if: github.actor != 'dependabot[bot]'
     needs: build_and_push_us
     with:
