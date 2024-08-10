@@ -6,22 +6,41 @@ metadata:
   displayName: GKE Info Go
 
   links:
-    - name: Sandbox Global
+    - name: Sandbox
       type: other
-      url: "https://sb.gcp.osinfra.io/gke-info"
+      url: "https://sb.gcp.osinfra.io/gke-info/health"
 
-    - name: Pre-Production Global
+    - name: "Sandbox: us-east1-b"
       type: other
-      url: "https://pre-prod.gcp.osinfra.io/gke-info"
+      url: "https://us-east1-b.sb.gcp.osinfra.io/gke-info-go/gke-info/health"
 
-    - name: Production Global
+    - name: "Sandbox: us-east4-a"
       type: other
-      url: "https://gcp.osinfra.io/gke-info"
+      url: "https://us-east4-a.sb.gcp.osinfra.io/gke-info-go/gke-info/health"
 
-    - name: osinfra-io/gke-info-go
-      type: repo
-      provider: github
-      url: https://github.com/osinfra-io/gke-info-go
+    - name: Pre-Production
+      type: other
+      url: "https://pre-prod.gcp.osinfra.io/gke-info/health"
+
+    - name: "Pre-Production: us-east1-b"
+      type: other
+      url: "https://us-east1-b.pre-prod.gcp.osinfra.io/gke-info/health"
+
+    - name: "Pre-Production: us-east4-a"
+      type: other
+      url: "https://us-east4-a.pre-prod.gcp.osinfra.io/gke-info/health"
+
+    - name: Production
+      type: other
+      url: "https://gcp.osinfra.io/gke-info/health"
+
+    - name: "Production: us-east1-b"
+      type: other
+      url: "https://us-east1-b.gcp.osinfra.io/gke-info/health"
+
+    - name: "Production: us-east4-a"
+      type: other
+      url: "https://us-east4-a.gcp.osinfra.io/gke-info/health"
 
   owner: platform-google-cloud-kubernetes
 
@@ -31,6 +50,7 @@ spec:
   type: web
   languages:
     - go
+
   dependsOn:
     - service:istio-gateway
 
