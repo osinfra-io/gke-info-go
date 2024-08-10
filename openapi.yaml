@@ -9,11 +9,11 @@ info:
 
 servers:
   - url: https://sb.gcp.osinfra.io/gke-info
-    description: Sandbox Global
+    description: Sandbox
   - url: https://pre-prod.gcp.osinfra.io/gke-info
-    description: Pre-Production Global
+    description: Pre-Production
   - url: https://gcp.osinfra.io/gke-info
-    description: Production Global
+    description: Production
 
 paths:
   /health:
