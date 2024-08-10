@@ -30,7 +30,7 @@ COPY internal/ /app/internal/
 
 # Build the application
 
-RUN GOOS=linux CGO_ENABLED=0 go build -o main cmd/http/main.go
+RUN GOOS=linux go build -o main cmd/http/main.go
 
 # Expose the port your application listens on
 
