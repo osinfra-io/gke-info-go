@@ -82,7 +82,7 @@ resource "datadog_synthetics_test" "this" {
 
   locations = each.value.locations
   message   = each.value.message
-  name      = "${each.value.name} on - region:${each.value.region} env:${var.env}"
+  name      = "${each.value.name} on - region:${each.value.region} env:${var.environment}"
 
   options_list {
     tick_every = 300
@@ -108,7 +108,7 @@ resource "datadog_synthetics_test" "this" {
   subtype = "http"
 
   tags = [
-    "env:${var.env}",
+    "env:${var.environment}",
     "service:${each.value.service}",
     "region:${each.value.region}",
     "team:platform-google-cloud-kubernetes"
@@ -140,7 +140,7 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
 
   metadata {
     labels = {
-      "tags.datadoghq.com/env"     = var.env
+      "tags.datadoghq.com/env"     = var.environment
       "tags.datadoghq.com/service" = "gke-info-go"
       "tags.datadoghq.com/version" = var.gke_info_go_version
     }
@@ -162,7 +162,7 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
       metadata {
         annotations = {
           "apm.datadoghq.com/env" = jsonencode({
-            "DD_ENV"     = var.env
+            "DD_ENV"     = var.environment
             "DD_SERVICE" = "gke-info-go"
             "DD_VERSION" = var.gke_info_go_version
           })
@@ -173,7 +173,7 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
           # Enable Admission Controller to mutate new pods part of this deployment
           "admission.datadoghq.com/enabled" = "true"
           "app"                             = "gke-info-go"
-          "tags.datadoghq.com/env"          = var.env
+          "tags.datadoghq.com/env"          = var.environment
           "tags.datadoghq.com/service"      = "gke-info-go"
           "tags.datadoghq.com/version"      = var.gke_info_go_version
         }
