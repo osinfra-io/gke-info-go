@@ -140,7 +140,7 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
 
   metadata {
     labels = {
-      "tags.datadoghq.com/env"     = var.env
+      "tags.datadoghq.com/env"     = var.environment
       "tags.datadoghq.com/service" = "gke-info-go"
       "tags.datadoghq.com/version" = var.gke_info_go_version
     }
@@ -162,7 +162,7 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
       metadata {
         annotations = {
           "apm.datadoghq.com/env" = jsonencode({
-            "DD_ENV"     = var.env
+            "DD_ENV"     = var.environment
             "DD_SERVICE" = "gke-info-go"
             "DD_VERSION" = var.gke_info_go_version
           })
@@ -173,7 +173,7 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
           # Enable Admission Controller to mutate new pods part of this deployment
           "admission.datadoghq.com/enabled" = "true"
           "app"                             = "gke-info-go"
-          "tags.datadoghq.com/env"          = var.env
+          "tags.datadoghq.com/env"          = var.environment
           "tags.datadoghq.com/service"      = "gke-info-go"
           "tags.datadoghq.com/version"      = var.gke_info_go_version
         }

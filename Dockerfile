@@ -30,7 +30,8 @@ COPY internal/ /app/internal/
 
 # Build the application
 
-RUN GOOS=linux go build -o main cmd/http/main.go
+# For Datadog ASM the Go build tag appsec is not necessary if CGO is enabled with CGO_ENABLED=1
+RUN GOOS=linux CGO_ENABLED=0 go build -v -tags appsec -o main cmd/http/main.go
 
 # Expose the port your application listens on
 

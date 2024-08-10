@@ -1,7 +1,13 @@
 variable "env" {
-  description = "This is the environment suffix for example: sb (Sandbox), pre-prod (Pre-Production), prod (Production)"
+  description = "This is the environment suffix for example: `sb` (Sandbox), `non-prod` (Non-Production), `prod` (Production)"
   type        = string
   default     = "sb"
+}
+
+variable "environment" {
+  description = "The full environment name for example: `sandbox`, `non-production`, `production`"
+  type        = string
+  default     = "sandbox"
 }
 
 variable "datadog_api_key" {
