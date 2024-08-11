@@ -2,9 +2,9 @@
 # https://www.terraform.io/docs/language/values/locals.html
 
 locals {
-  datadog_mci_synthetic_url          = var.env == "prod" ? "https://gcp.osinfra.io/${local.datadog_synthetic_service}" : "https://${var.env}.gcp.osinfra.io/${local.datadog_synthetic_service}"
-  datadog_synthetic_message_critical = var.env == "prod" ? "@hangouts-Platform-CriticalHighPriority" : ""
-  datadog_synthetic_message_medium   = var.env == "prod" ? "@hangouts-Platform-MediumLowInfoPriority" : ""
+  datadog_mci_synthetic_url          = var.environment == "production" ? "https://gcp.osinfra.io/${local.datadog_synthetic_service}" : "https://${local.env}.gcp.osinfra.io/${local.datadog_synthetic_service}"
+  datadog_synthetic_message_critical = var.environment == "production" ? "@hangouts-Platform-CriticalHighPriority" : ""
+  datadog_synthetic_message_medium   = var.environment == "production" ? "@hangouts-Platform-MediumLowInfoPriority" : ""
   datadog_synthetic_name             = "GKE Info"
   datadog_synthetic_service          = "gke-info-go"
 
@@ -64,10 +64,12 @@ locals {
       region           = "us-east1"
       service          = local.datadog_synthetic_service
       status           = "paused"
-      url              = var.env == "prod" ? "https://us-east1.gcp.osinfra.io/${local.datadog_synthetic_service}" : "https://us-east1.${var.env}.gcp.osinfra.io/${local.datadog_synthetic_service}"
+      url              = var.environment == "production" ? "https://us-east1.gcp.osinfra.io/${local.datadog_synthetic_service}" : "https://us-east1.${local.env}.gcp.osinfra.io/${local.datadog_synthetic_service}"
     }
   } : {}
 
-  registry           = var.env == "sb" ? "us-docker.pkg.dev/plt-lz-services-tf7f-sb/platform-docker-virtual" : "us-docker.pkg.dev/plt-lz-services-tf79-prod/platform-docker-virtual"
-  kubernetes_project = var.env == "sb" ? "plt-k8s-tf39-sb" : var.env == "prod" ? "plt-k8s-tf10-prod" : "plt-k8s-tf33-nonprod"
+  env = var.environment == "sandbox" ? "sb" : var.environment == "non-production" ? "non-prod" : var.environment == "production" ? "prod" : "none"
+
+  registry           = var.environment == "sandbox" ? "us-docker.pkg.dev/plt-lz-services-tf7f-sb/platform-docker-virtual" : "us-docker.pkg.dev/plt-lz-services-tf79-prod/platform-docker-virtual"
+  kubernetes_project = var.environment == "sandbox" ? "plt-k8s-tf39-sb" : var.environment == "production" ? "plt-k8s-tf10-prod" : "plt-k8s-tf33-nonprod"
 }

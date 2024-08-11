@@ -10,11 +10,30 @@ import (
 	"time"
 
 	"gke-info/internal/metadata"
+
+	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
+	"gopkg.in/DataDog/dd-trace-go.v1/profiler"
+
+	httptrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
 )
 
 // main initializes the HTTP server and sets up the routes.
 func main() {
-	mux := http.NewServeMux()
+	tracer.Start()
+	defer tracer.Stop()
+
+	err := profiler.Start(
+		profiler.WithProfileTypes(
+			profiler.CPUProfile,
+			profiler.HeapProfile,
+		),
+	)
+	if err != nil {
+		log.Printf("Warning: Failed to start profiler: %v", err)
+	}
+	defer profiler.Stop()
+
+	mux := httptrace.NewServeMux()
 	mux.HandleFunc("/gke-info-go/metadata/", metadata.MetadataHandler)
 	mux.HandleFunc("/gke-info-go/health", metadata.HealthCheckHandler)
 
