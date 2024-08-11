@@ -6,6 +6,16 @@ metadata:
   displayName: GKE Info Go
 
   links:
+    - name: Gitbook
+      type: doc
+      provider: Gitbook
+      url: "https://docs.osinfra.io/product-guides/google-cloud-platform/kubernetes"
+
+    - name: GitHub
+      type: repo
+      provider: Github
+      url: "https://github.com/osinfra-io/gke-info-go"
+
     - name: Sandbox
       type: other
       url: "https://sb.gcp.osinfra.io/gke-info-go/health"
