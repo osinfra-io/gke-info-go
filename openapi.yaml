@@ -1,6 +1,4 @@
 openapi: 3.1.0
-x-datadog:
-  teamHandle: platform-google-cloud-kubernetes
 
 info:
   title: GKE Info Go
@@ -18,6 +16,7 @@ servers:
 paths:
   /gke-info-go/health:
     get:
+      tags: []
       summary: Health Check
       description: Responds with a simple "OK" to indicate the service is healthy.
       responses:
@@ -31,6 +30,7 @@ paths:
 
   /gke-info-go/metadata/:
     get:
+      tags: []
       summary: Fetch Metadata
       description: Fetches the requested metadata based on the type.
       parameters:
@@ -81,3 +81,6 @@ paths:
 # checkov:skip=CKV_OPENAPI_5: API is not protected by authentication or authorization
 
 security: []
+
+x-datadog:
+  teamHandle: platform-google-cloud-kubernetes
