@@ -8,15 +8,15 @@ info:
   version: v0.2.1
 
 servers:
-  - url: https://sb.gcp.osinfra.io/gke-info-go
+  - url: https://sb.gcp.osinfra.io
     description: Sandbox
-  - url: https://pre-prod.gcp.osinfra.io/gke-info-go
+  - url: https://pre-prod.gcp.osinfra.io
     description: Pre-Production
-  - url: https://gcp.osinfra.io/gke-info-go
+  - url: https://gcp.osinfra.io
     description: Production
 
 paths:
-  /health:
+  /gke-info-go/health:
     get:
       summary: Health Check
       description: Responds with a simple "OK" to indicate the service is healthy.
@@ -29,7 +29,7 @@ paths:
                 type: string
                 example: OK
 
-  /metadata:
+  /gke-info-go/metadata/:
     get:
       summary: Fetch Metadata
       description: Fetches the requested metadata based on the type.
