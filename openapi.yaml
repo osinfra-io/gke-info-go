@@ -8,11 +8,11 @@ info:
   version: v0.2.1
 
 servers:
-  - url: https://sb.gcp.osinfra.io/gke-info
+  - url: https://sb.gcp.osinfra.io/gke-info-go
     description: Sandbox
-  - url: https://pre-prod.gcp.osinfra.io/gke-info
+  - url: https://pre-prod.gcp.osinfra.io/gke-info-go
     description: Pre-Production
-  - url: https://gcp.osinfra.io/gke-info
+  - url: https://gcp.osinfra.io/gke-info-go
     description: Production
 
 paths:
