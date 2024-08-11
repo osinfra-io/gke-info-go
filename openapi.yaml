@@ -1,6 +1,5 @@
 openapi: 3.1.0
 x-datadog:
-  service: gke-info-go
   teamHandle: platform-google-cloud-kubernetes
 
 info:
