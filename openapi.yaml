@@ -16,7 +16,7 @@ servers:
     description: Production
 
 paths:
-  /health:
+  /gke-info-go/health:
     get:
       summary: Health Check
       description: Responds with a simple "OK" to indicate the service is healthy.
@@ -29,7 +29,7 @@ paths:
                 type: string
                 example: OK
 
-  /gke-info-go/metadata/{type}:
+  /gke-info-go/metadata:
     get:
       summary: Fetch Metadata
       description: Fetches the requested metadata based on the type.
