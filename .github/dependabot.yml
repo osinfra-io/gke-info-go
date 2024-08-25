@@ -17,6 +17,12 @@ updates:
     schedule:
       interval: daily
 
+  - package-ecosystem: gomod
+    directories:
+      - "**/*"
+    schedule:
+      interval: daily
+
   - package-ecosystem: terraform
     directories:
       - "**/*"
