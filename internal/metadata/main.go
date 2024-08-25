@@ -23,7 +23,7 @@ var log = logrus.New()
 
 func init() {
     // Set log output to stdout and use JSON formatter
-    log.Out = os.Stdout
+    // log.Out = os.Stdout
     log.SetFormatter(&logrus.JSONFormatter{})
 }
 

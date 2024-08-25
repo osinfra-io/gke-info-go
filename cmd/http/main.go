@@ -25,7 +25,7 @@ var log = logrus.New()
 // main initializes the HTTP server and sets up the routes.
 func main() {
 	// Set log output to stdout and use JSON formatter
-	log.Out = os.Stdout
+	// log.Out = os.Stdout
 	log.SetFormatter(&logrus.JSONFormatter{})
 
 	// Add Datadog context log hook
