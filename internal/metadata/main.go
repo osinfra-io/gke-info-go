@@ -108,7 +108,7 @@ func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 
 	metadata, err := FetchMetadata(url)
 	if err != nil {
-		log.WithFields(logrus.Fields{
+		log.WithFields(log.Fields{
 			"error":        err,
 			"metadataType": metadataType,
 			"url":          url,
