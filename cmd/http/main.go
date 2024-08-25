@@ -24,8 +24,6 @@ var log = logrus.New()
 
 // main initializes the HTTP server and sets up the routes.
 func main() {
-	// Set log output to stdout and use JSON formatter
-	// log.Out = os.Stdout
 	log.SetFormatter(&logrus.JSONFormatter{})
 
 	// Add Datadog context log hook
@@ -45,6 +43,9 @@ func main() {
 	}
 	defer profiler.Stop()
 
+	// Create a context
+	ctx := context.Background()
+
 	mux := httptrace.NewServeMux()
 	mux.HandleFunc("/gke-info-go/metadata/", metadata.MetadataHandler)
 	mux.HandleFunc("/gke-info-go/health", metadata.HealthCheckHandler)
@@ -60,9 +61,9 @@ func main() {
 	}
 
 	go func() {
-		log.WithField("port", port).Info("Starting server...")
+		logrus.WithContext(ctx).Info("Starting server...")
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.WithField("error", err).Fatal("Failed to start server")
+			logrus.WithContext(ctx).Fatal("Failed to start server")
 		}
 	}()
 
@@ -70,13 +71,13 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	log.Info("Shutting down server...")
+	logrus.WithContext(ctx).Info("Shutting down server...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
-		log.WithField("error", err).Fatal("Server forced to shutdown")
+		logrus.WithContext(ctx).Fatal("Server forced to shutdown")
 	}
 
-	log.Info("Server exiting")
+	logrus.WithContext(ctx).Info("Server exiting")
 }

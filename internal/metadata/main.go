@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	// "os"
 	"strings"
 	"time"
 
@@ -22,8 +21,6 @@ const (
 var log = logrus.New()
 
 func init() {
-    // Set log output to stdout and use JSON formatter
-    // log.Out = os.Stdout
     log.SetFormatter(&logrus.JSONFormatter{})
 }
 
