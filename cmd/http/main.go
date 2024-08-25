@@ -19,6 +19,9 @@ import (
 
 // main initializes the HTTP server and sets up the routes.
 func main() {
+	// Set log output to stdout
+	log.SetOutput(os.Stdout)
+
 	tracer.Start()
 	defer tracer.Stop()
 

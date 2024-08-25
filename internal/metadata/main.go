@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -16,6 +17,11 @@ const (
 	ClusterLocationURL = "http://metadata.google.internal/computeMetadata/v1/instance/attributes/cluster-location"
 	InstanceZoneURL    = "http://metadata.google.internal/computeMetadata/v1/instance/zone"
 )
+
+func init() {
+    // Set log output to stdout
+    log.SetOutput(os.Stdout)
+}
 
 // FetchMetadata fetches metadata from the provided URL and returns it as a string
 var FetchMetadata = func(url string) (string, error) {
