@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 // Metadata server URLs
@@ -18,17 +19,21 @@ const (
 	InstanceZoneURL    = "http://metadata.google.internal/computeMetadata/v1/instance/zone"
 )
 
-var log = logrus.New()
-
 func init() {
-	logrus.SetFormatter(&logrus.JSONFormatter{})
+	log.SetFormatter(&log.JSONFormatter{})
+
+	// Output to stdout instead of the default stderr
+	log.SetOutput(os.Stdout)
+
+	// Only log the info severity or above
+	log.SetLevel(log.InfoLevel)
 }
 
 // FetchMetadata fetches metadata from the provided URL and returns it as a string
 var FetchMetadata = func(url string) (string, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		log.WithFields(logrus.Fields{
+		log.WithFields(log.Fields{
 			"error": err,
 			"url":   url,
 		}).Error("Error creating request")
@@ -41,7 +46,7 @@ var FetchMetadata = func(url string) (string, error) {
 	client := &http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.WithFields(logrus.Fields{
+		log.WithFields(log.Fields{
 			"error": err,
 			"url":   url,
 		}).Error("Error executing request")
@@ -55,7 +60,7 @@ var FetchMetadata = func(url string) (string, error) {
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.WithFields(logrus.Fields{
+		log.WithFields(log.Fields{
 			"error": err,
 			"url":   url,
 		}).Error("Error reading response body")

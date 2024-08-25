@@ -10,7 +10,7 @@ import (
 
 	"gke-info/internal/metadata"
 
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 
 	dd_logrus "gopkg.in/DataDog/dd-trace-go.v1/contrib/sirupsen/logrus"
 
@@ -20,14 +20,18 @@ import (
 	httptrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
 )
 
-var log = logrus.New()
-
 // main initializes the HTTP server and sets up the routes.
 func main() {
-	logrus.SetFormatter(&logrus.JSONFormatter{})
+	log.SetFormatter(&log.JSONFormatter{})
+
+	// Output to stdout instead of the default stderr
+	log.SetOutput(os.Stdout)
+
+	// Only log the info severity or above
+	log.SetLevel(log.InfoLevel)
 
 	// Add Datadog context log hook
-	logrus.AddHook(&dd_logrus.DDContextLogHook{})
+	log.AddHook(&dd_logrus.DDContextLogHook{})
 
 	tracer.Start()
 	defer tracer.Stop()
@@ -39,7 +43,7 @@ func main() {
 		),
 	)
 	if err != nil {
-		logrus.Warn("Failed to start profiler")
+		log.Warn("Failed to start profiler")
 	}
 	defer profiler.Stop()
 
@@ -61,9 +65,9 @@ func main() {
 	}
 
 	go func() {
-		logrus.WithContext(ctx).Info("Starting server...")
+		log.WithContext(ctx).Info("Starting server...")
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			logrus.WithContext(ctx).Fatal("Failed to start server")
+			log.WithContext(ctx).Fatal("Failed to start server")
 		}
 	}()
 
@@ -71,13 +75,13 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	logrus.WithContext(ctx).Info("Shutting down server...")
+	log.WithContext(ctx).Info("Shutting down server...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
-		logrus.WithContext(ctx).Fatal("Server forced to shutdown")
+		log.WithContext(ctx).Fatal("Server forced to shutdown")
 	}
 
-	logrus.WithContext(ctx).Info("Server exiting")
+	log.WithContext(ctx).Info("Server exiting")
 }
