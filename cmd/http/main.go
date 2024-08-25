@@ -24,7 +24,7 @@ var log = logrus.New()
 
 // main initializes the HTTP server and sets up the routes.
 func main() {
-	log.SetFormatter(&logrus.JSONFormatter{})
+	logrus.SetFormatter(&logrus.JSONFormatter{})
 
 	// Add Datadog context log hook
 	logrus.AddHook(&dd_logrus.DDContextLogHook{})
@@ -39,7 +39,7 @@ func main() {
 		),
 	)
 	if err != nil {
-		log.WithField("error", err).Warn("Failed to start profiler")
+		logrus.Warn("Failed to start profiler")
 	}
 	defer profiler.Stop()
 

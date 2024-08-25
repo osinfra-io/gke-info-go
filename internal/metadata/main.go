@@ -21,7 +21,7 @@ const (
 var log = logrus.New()
 
 func init() {
-    log.SetFormatter(&logrus.JSONFormatter{})
+	logrus.SetFormatter(&logrus.JSONFormatter{})
 }
 
 // FetchMetadata fetches metadata from the provided URL and returns it as a string
