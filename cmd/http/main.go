@@ -11,6 +11,9 @@ import (
 	"gke-info/internal/metadata"
 
 	"github.com/sirupsen/logrus"
+
+	dd_logrus "gopkg.in/DataDog/dd-trace-go.v1/contrib/sirupsen/logrus"
+
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 	"gopkg.in/DataDog/dd-trace-go.v1/profiler"
 
@@ -24,6 +27,9 @@ func main() {
 	// Set log output to stdout and use JSON formatter
 	log.Out = os.Stdout
 	log.SetFormatter(&logrus.JSONFormatter{})
+
+	// Add Datadog context log hook
+	logrus.AddHook(&dd_logrus.DDContextLogHook{})
 
 	tracer.Start()
 	defer tracer.Stop()
