@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 // Metadata server URLs
@@ -18,16 +19,22 @@ const (
 	InstanceZoneURL    = "http://metadata.google.internal/computeMetadata/v1/instance/zone"
 )
 
+var log = logrus.New()
+
 func init() {
-    // Set log output to stdout
-    log.SetOutput(os.Stdout)
+    // Set log output to stdout and use JSON formatter
+    log.Out = os.Stdout
+    log.SetFormatter(&logrus.JSONFormatter{})
 }
 
 // FetchMetadata fetches metadata from the provided URL and returns it as a string
 var FetchMetadata = func(url string) (string, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		log.Printf("[ERROR] Error creating request: %v", err)
+		log.WithFields(logrus.Fields{
+			"error": err,
+			"url":   url,
+		}).Error("Error creating request")
 		return "", err
 	}
 
@@ -37,7 +44,10 @@ var FetchMetadata = func(url string) (string, error) {
 	client := &http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Printf("[ERROR] Error executing request: %v", err)
+		log.WithFields(logrus.Fields{
+			"error": err,
+			"url":   url,
+		}).Error("Error executing request")
 		return "", err
 	}
 	defer resp.Body.Close()
@@ -48,7 +58,10 @@ var FetchMetadata = func(url string) (string, error) {
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Printf("[ERROR] Error reading response body: %v", err)
+		log.WithFields(logrus.Fields{
+			"error": err,
+			"url":   url,
+		}).Error("Error reading response body")
 		return "", err
 	}
 
@@ -59,18 +72,18 @@ var FetchMetadata = func(url string) (string, error) {
 func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	if _, err := w.Write([]byte("OK")); err != nil {
-		log.Printf("[ERROR] Error writing response: %v", err)
+		log.WithField("error", err).Error("Error writing response")
 		http.Error(w, "Failed to write response", http.StatusInternalServerError)
 	}
 }
 
 // MetadataHandler handles the /gke-info-go/metadata/* endpoint and fetches the requested metadata.
 func MetadataHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("[INFO] Received request for %s", r.URL.Path)
+	log.WithField("path", r.URL.Path).Info("Received request")
 
 	pathParts := strings.Split(r.URL.Path, "/")
 	if len(pathParts) < 4 {
-		log.Printf("[ERROR] Invalid request: %s", r.URL.Path)
+		log.WithField("path", r.URL.Path).Error("Invalid request")
 		http.Error(w, "Invalid request: expected /gke-info-go/metadata/{type}", http.StatusBadRequest)
 		return
 	}
@@ -86,14 +99,18 @@ func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 	case "instance-zone":
 		url = InstanceZoneURL
 	default:
-		log.Printf("[ERROR] Unknown metadata type: %s", metadataType)
+		log.WithField("metadataType", metadataType).Error("Unknown metadata type")
 		http.Error(w, "Unknown metadata type", http.StatusBadRequest)
 		return
 	}
 
 	metadata, err := FetchMetadata(url)
 	if err != nil {
-		log.Printf("[ERROR] Failed to fetch metadata: %v", err)
+		log.WithFields(logrus.Fields{
+			"error":        err,
+			"metadataType": metadataType,
+			"url":          url,
+		}).Error("Failed to fetch metadata")
 		http.Error(w, fmt.Sprintf("Failed to fetch metadata: %v", err), http.StatusInternalServerError)
 		return
 	}
@@ -104,7 +121,7 @@ func MetadataHandler(w http.ResponseWriter, r *http.Request) {
 		if len(instanceZoneParts) > 0 {
 			metadata = instanceZoneParts[len(instanceZoneParts)-1]
 		} else {
-			log.Printf("[ERROR] Unexpected format for instance-zone metadata: %s", metadata)
+			log.WithField("metadata", metadata).Error("Unexpected format for instance-zone metadata")
 			http.Error(w, "Unexpected format for instance-zone metadata", http.StatusInternalServerError)
 			return
 		}

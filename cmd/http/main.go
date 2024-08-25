@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -11,16 +10,20 @@ import (
 
 	"gke-info/internal/metadata"
 
+	"github.com/sirupsen/logrus"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 	"gopkg.in/DataDog/dd-trace-go.v1/profiler"
 
 	httptrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
 )
 
+var log = logrus.New()
+
 // main initializes the HTTP server and sets up the routes.
 func main() {
-	// Set log output to stdout
-	log.SetOutput(os.Stdout)
+	// Set log output to stdout and use JSON formatter
+	log.Out = os.Stdout
+	log.SetFormatter(&logrus.JSONFormatter{})
 
 	tracer.Start()
 	defer tracer.Stop()
@@ -32,7 +35,7 @@ func main() {
 		),
 	)
 	if err != nil {
-		log.Printf("Warning: Failed to start profiler: %v", err)
+		log.WithField("error", err).Warn("Failed to start profiler")
 	}
 	defer profiler.Stop()
 
@@ -51,9 +54,9 @@ func main() {
 	}
 
 	go func() {
-		log.Printf("[INFO] Starting server on port %s...\n", port)
+		log.WithField("port", port).Info("Starting server...")
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("[ERROR] Failed to start server: %v", err)
+			log.WithField("error", err).Fatal("Failed to start server")
 		}
 	}()
 
@@ -61,13 +64,13 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	log.Println("[INFO] Shutting down server...")
+	log.Info("Shutting down server...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
-		log.Fatalf("[ERROR] Server forced to shutdown: %v", err)
+		log.WithField("error", err).Fatal("Server forced to shutdown")
 	}
 
-	log.Println("[INFO] Server exiting")
+	log.Info("Server exiting")
 }
