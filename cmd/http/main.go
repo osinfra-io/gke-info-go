@@ -19,20 +19,23 @@ import (
 
 	httptrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
 )
-
-// main initializes the HTTP server and sets up the routes.
-func main() {
+func init() {
 	log.SetFormatter(&log.JSONFormatter{})
+	log.Println("Logrus set to JSON formatter")
 
 	// Output to stdout instead of the default stderr
 	log.SetOutput(os.Stdout)
+	log.Println("Logrus set to output to stdout")
 
 	// Only log the info severity or above
 	log.SetLevel(log.InfoLevel)
 
 	// Add Datadog context log hook
 	log.AddHook(&dd_logrus.DDContextLogHook{})
+}
 
+// main initializes the HTTP server and sets up the routes.
+func main() {
 	tracer.Start()
 	defer tracer.Stop()
 
@@ -43,7 +46,9 @@ func main() {
 		),
 	)
 	if err != nil {
-		log.Warn("Failed to start profiler")
+		log.Println("Failed to start profiler")
+	} else {
+		log.Println("Profiler started")
 	}
 	defer profiler.Stop()
 
