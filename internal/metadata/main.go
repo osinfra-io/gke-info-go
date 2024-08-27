@@ -1,15 +1,15 @@
 package metadata
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
-	log "github.com/sirupsen/logrus"
+	"gke-info/internal/observability"
 )
 
 // Metadata server URLs
@@ -19,119 +19,97 @@ const (
 	InstanceZoneURL    = "http://metadata.google.internal/computeMetadata/v1/instance/zone"
 )
 
-func init() {
-	log.SetFormatter(&log.JSONFormatter{})
-
-	// Output to stdout instead of the default stderr
-	log.SetOutput(os.Stdout)
-
-	// Only log the info severity or above
-	log.SetLevel(log.InfoLevel)
+type MetadataFetcher interface {
+    FetchMetadata(ctx context.Context, url string) (string, error)
 }
 
-// FetchMetadata fetches metadata from the provided URL and returns it as a string
-var FetchMetadata = func(url string) (string, error) {
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		log.WithFields(log.Fields{
-			"error": err,
-			"url":   url,
-		}).Error("Error creating request")
-		return "", err
-	}
+func FetchMetadata(ctx context.Context, url string) (string, error) {
+    req, err := http.NewRequest("GET", url, nil)
+    if err != nil {
+        observability.ErrorWithContext(ctx, fmt.Sprintf("Error creating request: %v", err))
+        return "", err
+    }
 
-	// Adding the metadata flavor header as required by GCP metadata server
-	req.Header.Add("Metadata-Flavor", "Google")
+    req.Header.Add("Metadata-Flavor", "Google")
 
-	client := &http.Client{Timeout: 10 * time.Second}
-	resp, err := client.Do(req)
-	if err != nil {
-		log.WithFields(log.Fields{
-			"error": err,
-			"url":   url,
-		}).Error("Error executing request")
-		return "", err
-	}
-	defer resp.Body.Close()
+    client := &http.Client{Timeout: 10 * time.Second}
+    resp, err := client.Do(req)
+    if err != nil {
+        observability.ErrorWithContext(ctx, fmt.Sprintf("Error executing request: %v", err))
+        return "", err
+    }
+    defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("failed to get metadata from %s, status code: %d, response: %s", url, resp.StatusCode, resp.Status)
-	}
+    if resp.StatusCode != http.StatusOK {
+        return "", fmt.Errorf("failed to get metadata from %s, status code: %d, response: %s", url, resp.StatusCode, resp.Status)
+    }
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.WithFields(log.Fields{
-			"error": err,
-			"url":   url,
-		}).Error("Error reading response body")
-		return "", err
-	}
+    body, err := io.ReadAll(resp.Body)
+    if err != nil {
+        observability.ErrorWithContext(ctx, fmt.Sprintf("Error reading response body: %v", err))
+        return "", err
+    }
 
-	return string(body), nil
+    return string(body), nil
 }
 
-// HealthCheckHandler responds with a simple "OK" to indicate the service is healthy.
 func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	if _, err := w.Write([]byte("OK")); err != nil {
-		log.WithField("error", err).Error("Error writing response")
-		http.Error(w, "Failed to write response", http.StatusInternalServerError)
-	}
+    w.WriteHeader(http.StatusOK)
+    if _, err := w.Write([]byte("OK")); err != nil {
+        observability.ErrorWithContext(r.Context(), fmt.Sprintf("Error writing response: %v", err))
+        http.Error(w, "Failed to write response", http.StatusInternalServerError)
+    }
 }
 
-// MetadataHandler handles the /gke-info-go/metadata/* endpoint and fetches the requested metadata.
-func MetadataHandler(w http.ResponseWriter, r *http.Request) {
-	log.WithField("path", r.URL.Path).Info("Received request")
+func MetadataHandler(fetchMetadataFunc func(ctx context.Context, url string) (string, error)) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        observability.InfoWithContext(r.Context(), fmt.Sprintf("Received request for %s", r.URL.Path))
 
-	pathParts := strings.Split(r.URL.Path, "/")
-	if len(pathParts) < 4 {
-		log.WithField("path", r.URL.Path).Error("Invalid request")
-		http.Error(w, "Invalid request: expected /gke-info-go/metadata/{type}", http.StatusBadRequest)
-		return
-	}
+        pathParts := strings.Split(r.URL.Path, "/")
+        if len(pathParts) < 4 {
+            observability.ErrorWithContext(r.Context(), fmt.Sprintf("Invalid request: %s", r.URL.Path))
+            http.Error(w, "Invalid request: expected /gke-info-go/metadata/{type}", http.StatusBadRequest)
+            return
+        }
 
-	metadataType := pathParts[3]
-	var url string
+        metadataType := pathParts[3]
+        var url string
 
-	switch metadataType {
-	case "cluster-name":
-		url = ClusterNameURL
-	case "cluster-location":
-		url = ClusterLocationURL
-	case "instance-zone":
-		url = InstanceZoneURL
-	default:
-		log.WithField("metadataType", metadataType).Error("Unknown metadata type")
-		http.Error(w, "Unknown metadata type", http.StatusBadRequest)
-		return
-	}
+        switch metadataType {
+        case "cluster-name":
+            url = ClusterNameURL
+        case "cluster-location":
+            url = ClusterLocationURL
+        case "instance-zone":
+            url = InstanceZoneURL
+        default:
+            observability.ErrorWithContext(r.Context(), fmt.Sprintf("Unknown metadata type: %s", metadataType))
+            http.Error(w, "Unknown metadata type", http.StatusBadRequest)
+            return
+        }
 
-	metadata, err := FetchMetadata(url)
-	if err != nil {
-		log.WithFields(log.Fields{
-			"error":        err,
-			"metadataType": metadataType,
-			"url":          url,
-		}).Error("Failed to fetch metadata")
-		http.Error(w, fmt.Sprintf("Failed to fetch metadata: %v", err), http.StatusInternalServerError)
-		return
-	}
+        metadata, err := fetchMetadataFunc(r.Context(), url)
+        if err != nil {
+            observability.ErrorWithContext(r.Context(), fmt.Sprintf("Failed to fetch metadata: %v", err))
+            http.Error(w, fmt.Sprintf("Failed to fetch metadata: %v", err), http.StatusInternalServerError)
+            return
+        }
 
-	// Handle special case for instance-zone metadata and write the response.
-	if metadataType == "instance-zone" {
-		instanceZoneParts := strings.Split(metadata, "/")
-		if len(instanceZoneParts) > 0 {
-			metadata = instanceZoneParts[len(instanceZoneParts)-1]
-		} else {
-			log.WithField("metadata", metadata).Error("Unexpected format for instance-zone metadata")
-			http.Error(w, "Unexpected format for instance-zone metadata", http.StatusInternalServerError)
-			return
-		}
-	}
+        if metadataType == "instance-zone" {
+            instanceZoneParts := strings.Split(metadata, "/")
+            if len(instanceZoneParts) > 0 {
+                metadata = instanceZoneParts[len(instanceZoneParts)-1]
+            } else {
+                observability.ErrorWithContext(r.Context(), fmt.Sprintf("Unexpected format for instance-zone metadata: %s", metadata))
+                http.Error(w, "Unexpected format for instance-zone metadata", http.StatusInternalServerError)
+                return
+            }
+        }
 
-	response := map[string]string{metadataType: metadata}
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(response); err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
-	}
+        response := map[string]string{metadataType: metadata}
+        w.Header().Set("Content-Type", "application/json")
+        if err := json.NewEncoder(w).Encode(response); err != nil {
+            http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+        }
+    }
 }

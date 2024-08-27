@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -9,84 +10,69 @@ import (
 	"time"
 
 	"gke-info/internal/metadata"
-
-	log "github.com/sirupsen/logrus"
-
-	dd_logrus "gopkg.in/DataDog/dd-trace-go.v1/contrib/sirupsen/logrus"
+	"gke-info/internal/observability"
 
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 	"gopkg.in/DataDog/dd-trace-go.v1/profiler"
 
 	httptrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
 )
-func init() {
-	log.SetFormatter(&log.JSONFormatter{})
-	log.Println("Logrus set to JSON formatter")
-
-	// Output to stdout instead of the default stderr
-	log.SetOutput(os.Stdout)
-	log.Println("Logrus set to output to stdout")
-
-	// Only log the info severity or above
-	log.SetLevel(log.InfoLevel)
-
-	// Add Datadog context log hook
-	log.AddHook(&dd_logrus.DDContextLogHook{})
-}
 
 // main initializes the HTTP server and sets up the routes.
 func main() {
-	tracer.Start()
-	defer tracer.Stop()
+    ctx := context.Background()
 
-	err := profiler.Start(
-		profiler.WithProfileTypes(
-			profiler.CPUProfile,
-			profiler.HeapProfile,
-		),
-	)
-	if err != nil {
-		log.Println("Failed to start profiler")
-	} else {
-		log.Println("Profiler started")
-	}
-	defer profiler.Stop()
+    // Initialize logger
+    observability.Init()
 
-	// Create a context
-	ctx := context.Background()
+    observability.InfoWithContext(ctx, "Application is starting")
 
-	mux := httptrace.NewServeMux()
-	mux.HandleFunc("/gke-info-go/metadata/", metadata.MetadataHandler)
-	mux.HandleFunc("/gke-info-go/health", metadata.HealthCheckHandler)
+    tracer.Start()
+    defer tracer.Stop()
 
-	port := "8080"
-	if envPort := os.Getenv("PORT"); envPort != "" {
-		port = envPort
-	}
+    err := profiler.Start(
+        profiler.WithProfileTypes(
+            profiler.CPUProfile,
+            profiler.HeapProfile,
+        ),
+    )
+    if err != nil {
+        observability.ErrorWithContext(ctx, fmt.Sprintf("Warning: Failed to start profiler: %v", err))
+    }
+    defer profiler.Stop()
 
-	server := &http.Server{
-		Addr:    ":" + port,
-		Handler: mux,
-	}
+    mux := httptrace.NewServeMux()
+    mux.HandleFunc("/gke-info-go/metadata/", metadata.MetadataHandler(metadata.FetchMetadata))
+    mux.HandleFunc("/gke-info-go/health", metadata.HealthCheckHandler)
 
-	go func() {
-		log.WithContext(ctx).Info("Starting server...")
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.WithContext(ctx).Fatal("Failed to start server")
-		}
-	}()
+    port := "8080"
+    if envPort := os.Getenv("PORT"); envPort != "" {
+        port = envPort
+    }
 
-	// Graceful shutdown
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-	log.WithContext(ctx).Info("Shutting down server...")
+    server := &http.Server{
+        Addr:    ":" + port,
+        Handler: mux,
+    }
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if err := server.Shutdown(ctx); err != nil {
-		log.WithContext(ctx).Fatal("Server forced to shutdown")
-	}
+    go func() {
+        observability.InfoWithContext(ctx, fmt.Sprintf("Starting server on port %s...", port))
+        if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+            observability.ErrorWithContext(ctx, fmt.Sprintf("Failed to start server: %v", err))
+        }
+    }()
 
-	log.WithContext(ctx).Info("Server exiting")
+    // Graceful shutdown
+    quit := make(chan os.Signal, 1)
+    signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+    <-quit
+    observability.InfoWithContext(ctx, "Shutting down server...")
+
+    ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+    defer cancel()
+    if err := server.Shutdown(ctx); err != nil {
+        observability.ErrorWithContext(ctx, fmt.Sprintf("Server forced to shutdown: %v", err))
+    }
+
+    observability.InfoWithContext(ctx, "Server exiting")
 }
