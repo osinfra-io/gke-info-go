@@ -1,11 +1,11 @@
-FROM golang:1.23
+FROM golang:1.22-alpine
 
 # Ensure that HEALTHCHECK instructions have been added to container images
 # checkov:skip=CKV_DOCKER_2: Since Kubernetes 1.8, the Docker HEALTHCHECK has been disabled explicitly
 
 # Create a non-root user for security purposes
 
-RUN useradd -m gke-info
+RUN addgroup -S gke-info && adduser -S gke-info -G gke-info
 USER gke-info
 
 ARG DD_GIT_REPOSITORY_URL
