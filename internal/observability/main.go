@@ -20,16 +20,22 @@ func Init() {
 	log.Info("Logrus set to output to stdout")
 
 	// Only log the info severity or above
-	log.SetLevel(logrus.InfoLevel)
+	level, err := logrus.ParseLevel(os.Getenv("LOG_LEVEL"))
+
+	if err != nil {
+		level = logrus.InfoLevel
+	}
+
+	log.SetLevel(level)
 
 	// Add Datadog context log hook
 	log.AddHook(&dd_logrus.DDContextLogHook{})
 }
 
 func InfoWithContext(ctx context.Context, msg string) {
-    log.WithContext(ctx).Info(msg)
+	log.WithContext(ctx).Info(msg)
 }
 
 func ErrorWithContext(ctx context.Context, msg string) {
-    log.WithContext(ctx).Error(msg)
+	log.WithContext(ctx).Error(msg)
 }
