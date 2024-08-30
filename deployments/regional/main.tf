@@ -270,6 +270,45 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
   }
 }
 
+# Kubernetes Manifest Resource
+# https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest
+
+resource "kubernetes_manifest" "gke_info_go" {
+  manifest = {
+    apiVersion = "security.istio.io/v1"
+    kind       = "AuthorizationPolicy"
+
+    metadata = {
+      name      = "istio-gateway"
+      namespace = "gke-info"
+    }
+
+    spec = {
+      action = "ALLOW"
+      rules = [
+        {
+          from = [
+            {
+              source = {
+                principals = ["cluster.local/istio-gateway/default/sa/istio-gateway"]
+              }
+            }
+          ]
+
+          to = [
+            {
+              operation = {
+                methods = ["GET"]
+                paths   = ["gke-info-go/health", "gke-info-go/metadata"]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+
 # Kubernetes Service Resource
 # https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_v1
 
