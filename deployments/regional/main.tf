@@ -290,19 +290,19 @@ resource "kubernetes_manifest" "gke_info_go" {
           from = [
             {
               source = {
-                principals = ["cluster.local/istio-gateway/default/sa/istio-gateway"]
+                principals = ["cluster.local/istio-gateway/default/sa/gateway"]
               }
             }
           ]
 
-          to = [
-            {
-              operation = {
-                methods = ["GET"]
-                paths   = ["gke-info-go/health", "gke-info-go/metadata"]
-              }
-            }
-          ]
+          # to = [
+          #   {
+          #     operation = {
+          #       methods = ["GET"]
+          #       paths   = ["gke-info-go/health", "gke-info-go/metadata"]
+          #     }
+          #   }
+          # ]
         }
       ]
     }
