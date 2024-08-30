@@ -6,7 +6,7 @@ locals {
   datadog_synthetic_message_critical = var.environment == "production" ? "@hangouts-Platform-CriticalHighPriority" : ""
   datadog_synthetic_message_medium   = var.environment == "production" ? "@hangouts-Platform-MediumLowInfoPriority" : ""
   datadog_synthetic_name             = "GKE Info"
-  datadog_synthetic_service          = "gke-info-go"
+  datadog_synthetic_service          = "gke-info-go/metadata/cluster-name"
 
   datadog_synthetic_tests = var.region == "us-east1" || var.zone == "b" ? {
     "mci" = {
