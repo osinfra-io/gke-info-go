@@ -2,7 +2,7 @@
 # https://www.terraform.io/docs/language/values/locals.html
 
 locals {
-  datadog_mci_synthetic_url          = var.environment == "production" ? "https://gcp.osinfra.io/${local.datadog_synthetic_service}" : "https://${local.env}.gcp.osinfra.io/${local.datadog_synthetic_service}"
+  datadog_mci_synthetic_url          = var.environment == "production" ? "https://gcp.osinfra.io/${local.datadog_synthetic_service}/metadata/cluster-name" : "https://${local.env}.gcp.osinfra.io/${local.datadog_synthetic_service}/metadata/cluster-name"
   datadog_synthetic_message_critical = var.environment == "production" ? "@hangouts-Platform-CriticalHighPriority" : ""
   datadog_synthetic_message_medium   = var.environment == "production" ? "@hangouts-Platform-MediumLowInfoPriority" : ""
   datadog_synthetic_name             = "GKE Info"

@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"gke-info/internal/metadata"
+	"gke-info/internal/observability"
 
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 	"gopkg.in/DataDog/dd-trace-go.v1/profiler"
@@ -19,52 +20,59 @@ import (
 
 // main initializes the HTTP server and sets up the routes.
 func main() {
-	tracer.Start()
-	defer tracer.Stop()
+    ctx := context.Background()
 
-	err := profiler.Start(
-		profiler.WithProfileTypes(
-			profiler.CPUProfile,
-			profiler.HeapProfile,
-		),
-	)
-	if err != nil {
-		log.Printf("Warning: Failed to start profiler: %v", err)
-	}
-	defer profiler.Stop()
+    // Initialize logger
+    observability.Init()
 
-	mux := httptrace.NewServeMux()
-	mux.HandleFunc("/gke-info-go/metadata/", metadata.MetadataHandler)
-	mux.HandleFunc("/gke-info-go/health", metadata.HealthCheckHandler)
+    observability.InfoWithContext(ctx, "Application is starting")
 
-	port := "8080"
-	if envPort := os.Getenv("PORT"); envPort != "" {
-		port = envPort
-	}
+    tracer.Start()
+    defer tracer.Stop()
 
-	server := &http.Server{
-		Addr:    ":" + port,
-		Handler: mux,
-	}
+    err := profiler.Start(
+        profiler.WithProfileTypes(
+            profiler.CPUProfile,
+            profiler.HeapProfile,
+        ),
+    )
+    if err != nil {
+        observability.ErrorWithContext(ctx, fmt.Sprintf("Warning: Failed to start profiler: %v", err))
+    }
+    defer profiler.Stop()
 
-	go func() {
-		log.Printf("Starting server on port %s...\n", port)
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("Failed to start server: %v", err)
-		}
-	}()
+    mux := httptrace.NewServeMux()
+    mux.HandleFunc("/gke-info-go/metadata/", metadata.MetadataHandler(metadata.FetchMetadata))
+    mux.HandleFunc("/gke-info-go/health", metadata.HealthCheckHandler)
 
-	// Graceful shutdown
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-	log.Println("Shutting down server...")
+    port := "8080"
+    if envPort := os.Getenv("PORT"); envPort != "" {
+        port = envPort
+    }
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if err := server.Shutdown(ctx); err != nil {
-		log.Fatalf("Server forced to shutdown: %v", err)
-	}
+    server := &http.Server{
+        Addr:    ":" + port,
+        Handler: mux,
+    }
 
-	log.Println("Server exiting")
+    go func() {
+        observability.InfoWithContext(ctx, fmt.Sprintf("Starting server on port %s...", port))
+        if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+            observability.ErrorWithContext(ctx, fmt.Sprintf("Failed to start server: %v", err))
+        }
+    }()
+
+    // Graceful shutdown
+    quit := make(chan os.Signal, 1)
+    signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+    <-quit
+    observability.InfoWithContext(ctx, "Shutting down server...")
+
+    ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+    defer cancel()
+    if err := server.Shutdown(ctx); err != nil {
+        observability.ErrorWithContext(ctx, fmt.Sprintf("Server forced to shutdown: %v", err))
+    }
+
+    observability.InfoWithContext(ctx, "Server exiting")
 }

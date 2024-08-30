@@ -1,87 +1,78 @@
 package metadata_test
 
 import (
-	"fmt"
-	"io"
-	"net/http"
-	"net/http/httptest"
-	"strings"
-	"testing"
+    "context"
+    "fmt"
+    "io"
+    "net/http"
+    "net/http/httptest"
+    "os"
+    "testing"
 
-	"github.com/stretchr/testify/assert"
-	"gke-info/internal/metadata"
+    "github.com/stretchr/testify/assert"
+    "gke-info/internal/metadata"
 )
 
-// MockFetchMetadata is a mock implementation of the FetchMetadata function
-func MockFetchMetadata(url string) (string, error) {
-	switch url {
-	case metadata.ClusterNameURL:
-		return "test-cluster-name", nil
-	case metadata.ClusterLocationURL:
-		return "test-cluster-location", nil
-	case metadata.InstanceZoneURL:
-		return "projects/1234567890/zones/us-central1-a", nil
-	default:
-		return "", fmt.Errorf("unknown URL: %s", url)
-	}
+// MockFetchMetadata is a mock implementation of MetadataFetcher
+type MockFetchMetadata struct{}
+
+func (m *MockFetchMetadata) FetchMetadata(ctx context.Context, url string) (string, error) {
+    switch url {
+    case metadata.ClusterNameURL:
+        return "test-cluster-name", nil
+    case metadata.ClusterLocationURL:
+        return "test-cluster-location", nil
+    case metadata.InstanceZoneURL:
+        return "projects/1234567890/zones/us-central1-a", nil
+    default:
+        return "", fmt.Errorf("unknown URL: %s", url)
+    }
 }
 
-// TestFetchMetadata tests the FetchMetadata function
-func TestFetchMetadata(t *testing.T) {
-	originalFetchMetadata := metadata.FetchMetadata
-	defer func() { metadata.FetchMetadata = originalFetchMetadata }()
-	metadata.FetchMetadata = MockFetchMetadata
-
-	tests := []struct {
-		url      string
-		expected string
-	}{
-		{metadata.ClusterNameURL, "test-cluster-name"},
-		{metadata.ClusterLocationURL, "test-cluster-location"},
-		{metadata.InstanceZoneURL, "projects/1234567890/zones/us-central1-a"},
-	}
-
-	for _, test := range tests {
-		result, err := metadata.FetchMetadata(test.url)
-		assert.NoError(t, err)
-		assert.Equal(t, test.expected, result)
-	}
+// metadataHandlerWrapper wraps the MetadataHandler to match the expected signature
+func metadataHandlerWrapper(fetcher metadata.MetadataFetcher) http.HandlerFunc {
+    return metadata.MetadataHandler(fetcher.FetchMetadata)
 }
 
-// TestMetadataHandler tests the MetadataHandler function
-func TestMetadataHandler(t *testing.T) {
-	originalFetchMetadata := metadata.FetchMetadata
-	defer func() { metadata.FetchMetadata = originalFetchMetadata }()
-	metadata.FetchMetadata = MockFetchMetadata
+func TestMain(t *testing.T) {
+    // Set up a test server
+    mux := http.NewServeMux()
+    mux.HandleFunc("/gke-info-go/metadata/", metadataHandlerWrapper(&MockFetchMetadata{}))
 
-	tests := []struct {
-		url          string
-		expectedCode int
-		expectedBody string
-		isJSON       bool
-	}{
-		{"/gke-info-go/metadata/cluster-name", http.StatusOK, `{"cluster-name":"test-cluster-name"}`, true},
-		{"/gke-info-go/metadata/cluster-location", http.StatusOK, `{"cluster-location":"test-cluster-location"}`, true},
-		{"/gke-info-go/metadata/instance-zone", http.StatusOK, `{"instance-zone":"us-central1-a"}`, true},
-		{"/gke-info-go/metadata/unknown", http.StatusBadRequest, "Unknown metadata type", false},
-	}
+    ts := httptest.NewServer(mux)
+    defer ts.Close()
 
-	for _, test := range tests {
-		req, err := http.NewRequest("GET", test.url, nil)
-		assert.NoError(t, err)
+    // Set the PORT environment variable to the test server's port
+    os.Setenv("PORT", ts.Listener.Addr().String())
+    defer os.Unsetenv("PORT")
 
-		rr := httptest.NewRecorder()
-		handler := http.HandlerFunc(metadata.MetadataHandler)
-		handler.ServeHTTP(rr, req)
+    // Test cases
+    tests := []struct {
+        url          string
+        expectedCode int
+        expectedBody string
+        isJSON       bool
+    }{
+        {ts.URL + "/gke-info-go/metadata/cluster-name", http.StatusOK, `{"cluster-name":"test-cluster-name"}`, true},
+        {ts.URL + "/gke-info-go/metadata/cluster-location", http.StatusOK, `{"cluster-location":"test-cluster-location"}`, true},
+        {ts.URL + "/gke-info-go/metadata/instance-zone", http.StatusOK, `{"instance-zone":"us-central1-a"}`, true},
+        {ts.URL + "/gke-info-go/metadata/unknown", http.StatusBadRequest, "Unknown metadata type\n", false},
+    }
 
-		assert.Equal(t, test.expectedCode, rr.Code)
+    // Run the test cases
+    for _, test := range tests {
+        resp, err := http.Get(test.url)
+        assert.NoError(t, err)
+        assert.Equal(t, test.expectedCode, resp.StatusCode)
 
-		body, err := io.ReadAll(rr.Body)
-		assert.NoError(t, err)
-		if test.isJSON {
-			assert.JSONEq(t, test.expectedBody, strings.TrimSpace(string(body)))
-		} else {
-			assert.Equal(t, test.expectedBody, strings.TrimSpace(string(body)))
-		}
-	}
+        body, err := io.ReadAll(resp.Body)
+        assert.NoError(t, err)
+        defer resp.Body.Close()
+
+        if test.isJSON {
+            assert.JSONEq(t, test.expectedBody, string(body))
+        } else {
+            assert.Equal(t, test.expectedBody, string(body))
+        }
+    }
 }
