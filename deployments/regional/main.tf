@@ -290,7 +290,7 @@ resource "kubernetes_manifest" "gke_info_go" {
           from = [
             {
               source = {
-                principals = ["cluster.local/istio-gateway/default/sa/gateway"]
+                principals = ["cluster.local/ns/istio-gateway/sa/gateway"]
               }
             }
           ]
