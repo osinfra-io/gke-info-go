@@ -311,6 +311,12 @@ resource "kubernetes_manifest" "gke_info_go" {
           ]
         }
       ]
+
+      selector = {
+        matchLabels = {
+          app = "gke-info-go"
+        }
+      }
     }
   }
 }
