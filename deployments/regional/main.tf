@@ -287,22 +287,21 @@ resource "kubernetes_manifest" "gke_info_go" {
       action = "ALLOW"
       rules = [
         {
-          from = [
-            {
-              source = {
-                principals = ["cluster.local/ns/istio-gateway/sa/gateway"]
-              }
-            }
-          ]
-
-          # to = [
+          # from = [
           #   {
-          #     operation = {
-          #       methods = ["GET"]
-          #       paths   = ["gke-info-go/health", "gke-info-go/metadata"]
+          #     source = {
+          #       principals = ["cluster.local/ns/istio-gateway/sa/gateway"]
           #     }
           #   }
           # ]
+
+          to = [
+            {
+              operation = {
+                methods = ["*"]
+              }
+            }
+          ]
         }
       ]
     }
