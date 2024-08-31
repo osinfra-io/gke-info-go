@@ -290,7 +290,7 @@ resource "kubernetes_manifest" "gke_info_go" {
           from = [
             {
               source = {
-                principals = ["cluster.local/ns/istio-gateway/sa/gateway"]
+                namespaces = ["istio-ingress"]
               }
             }
           ]
@@ -298,8 +298,15 @@ resource "kubernetes_manifest" "gke_info_go" {
           to = [
             {
               operation = {
-                methods = ["*"]
+                methods = ["GET"]
               }
+
+              paths = [
+                "/gke-info-go/health",
+                "/gke-info-go/metadata/cluster-location",
+                "/gke-info-go/metadata/cluster-name",
+                "/gke-info-go/metadata/instance-zone"
+              ]
             }
           ]
         }
