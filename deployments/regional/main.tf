@@ -300,6 +300,8 @@ resource "kubernetes_manifest" "gke_info_go" {
               operation = {
                 methods = ["GET"]
 
+                # The authorization policy below uses the ALLOW-with-positive-matching pattern to allow requests to specific paths.
+
                 paths = [
                   "/gke-info-go/health",
                   "/gke-info-go/metadata/cluster-location",
