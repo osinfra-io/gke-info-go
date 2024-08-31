@@ -299,14 +299,14 @@ resource "kubernetes_manifest" "gke_info_go" {
             {
               operation = {
                 methods = ["GET"]
-              }
 
-              paths = [
-                "/gke-info-go/health",
-                "/gke-info-go/metadata/cluster-location",
-                "/gke-info-go/metadata/cluster-name",
-                "/gke-info-go/metadata/instance-zone"
-              ]
+                paths = [
+                  "/gke-info-go/health",
+                  "/gke-info-go/metadata/cluster-location",
+                  "/gke-info-go/metadata/cluster-name",
+                  "/gke-info-go/metadata/instance-zone"
+                ]
+              }
             }
           ]
         }
