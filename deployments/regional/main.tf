@@ -279,7 +279,7 @@ resource "kubernetes_manifest" "gke_info_go" {
     kind       = "AuthorizationPolicy"
 
     metadata = {
-      name      = "istio-gateway"
+      name      = "gke-info-go"
       namespace = "gke-info"
     }
 
