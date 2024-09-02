@@ -35,6 +35,7 @@ paths:
       description: Fetches the requested metadata based on the type.
       parameters:
         - name: type
+          description: The type of metadata to fetch.
           in: path
           required: true
           schema:
@@ -43,8 +44,7 @@ paths:
               - cluster-name
               - cluster-location
               - instance-zone
-          description: The type of metadata to fetch.
-
+              
       responses:
         '200':
           description: Metadata fetched successfully
