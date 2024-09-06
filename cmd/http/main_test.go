@@ -14,18 +14,15 @@ import (
 )
 
 func TestMain(t *testing.T) {
-    // Set up a test server
     mux := http.NewServeMux()
     mux.HandleFunc("/gke-info-go/metadata/", metadata.MetadataHandler(mockFetchMetadata))
 
     ts := httptest.NewServer(mux)
     defer ts.Close()
 
-    // Set the PORT environment variable to the test server's port
     os.Setenv("PORT", ts.Listener.Addr().String())
     defer os.Unsetenv("PORT")
 
-    // Test cases
     tests := []struct {
         url          string
         expectedCode int
@@ -38,7 +35,6 @@ func TestMain(t *testing.T) {
         {ts.URL + "/gke-info-go/metadata/unknown", http.StatusBadRequest, "Unknown metadata type\n", false},
     }
 
-    // Run the test cases
     for _, test := range tests {
         resp, err := http.Get(test.url)
         assert.NoError(t, err)
