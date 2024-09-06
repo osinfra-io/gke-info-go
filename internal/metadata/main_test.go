@@ -13,7 +13,6 @@ import (
     "gke-info/internal/metadata"
 )
 
-// MockFetchMetadata is a mock implementation of MetadataFetcher
 type MockFetchMetadata struct{}
 
 func (m *MockFetchMetadata) FetchMetadata(ctx context.Context, url string) (string, error) {
@@ -29,24 +28,20 @@ func (m *MockFetchMetadata) FetchMetadata(ctx context.Context, url string) (stri
     }
 }
 
-// metadataHandlerWrapper wraps the MetadataHandler to match the expected signature
 func metadataHandlerWrapper(fetcher metadata.MetadataFetcher) http.HandlerFunc {
     return metadata.MetadataHandler(fetcher.FetchMetadata)
 }
 
 func TestMain(t *testing.T) {
-    // Set up a test server
     mux := http.NewServeMux()
     mux.HandleFunc("/gke-info-go/metadata/", metadataHandlerWrapper(&MockFetchMetadata{}))
 
     ts := httptest.NewServer(mux)
     defer ts.Close()
 
-    // Set the PORT environment variable to the test server's port
     os.Setenv("PORT", ts.Listener.Addr().String())
     defer os.Unsetenv("PORT")
 
-    // Test cases
     tests := []struct {
         url          string
         expectedCode int

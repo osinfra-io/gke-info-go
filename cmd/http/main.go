@@ -18,11 +18,9 @@ import (
 	httptrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
 )
 
-// main initializes the HTTP server and sets up the routes.
 func main() {
     ctx := context.Background()
 
-    // Initialize logger
     observability.Init()
 
     observability.InfoWithContext(ctx, "Application is starting")
@@ -44,6 +42,7 @@ func main() {
     mux := httptrace.NewServeMux()
     mux.HandleFunc("/gke-info-go/metadata/", metadata.MetadataHandler(metadata.FetchMetadata))
     mux.HandleFunc("/gke-info-go/health", metadata.HealthCheckHandler)
+    mux.HandleFunc("/", metadata.NotFoundHandler)
 
     port := "8080"
     if envPort := os.Getenv("PORT"); envPort != "" {
@@ -52,6 +51,7 @@ func main() {
 
     server := &http.Server{
         Addr:    ":" + port,
+        ReadTimeout:  5 * time.Second,
         Handler: mux,
     }
 
@@ -62,7 +62,6 @@ func main() {
         }
     }()
 
-    // Graceful shutdown
     quit := make(chan os.Signal, 1)
     signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
     <-quit

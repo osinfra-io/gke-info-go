@@ -12,7 +12,6 @@ import (
 	"gke-info/internal/observability"
 )
 
-// Metadata server URLs
 const (
 	ClusterNameURL     = "http://metadata.google.internal/computeMetadata/v1/instance/attributes/cluster-name"
 	ClusterLocationURL = "http://metadata.google.internal/computeMetadata/v1/instance/attributes/cluster-location"
@@ -64,7 +63,7 @@ func MetadataHandler(fetchMetadataFunc func(ctx context.Context, url string) (st
 		observability.InfoWithContext(r.Context(), fmt.Sprintf("Received request for %s", r.URL.Path))
 
 		pathParts := strings.Split(r.URL.Path, "/")
-		if len(pathParts) < 4 {
+		if len(pathParts) != 4 {
 			observability.ErrorWithContext(r.Context(), fmt.Sprintf("Invalid request: %s", r.URL.Path))
 			http.Error(w, "Invalid request: expected /gke-info-go/metadata/{type}", http.StatusBadRequest)
 			return
@@ -110,4 +109,8 @@ func MetadataHandler(fetchMetadataFunc func(ctx context.Context, url string) (st
 			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 		}
 	}
+}
+
+func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
+	http.Error(w, "Not Found", http.StatusNotFound)
 }
