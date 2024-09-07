@@ -52,7 +52,7 @@ provider "kubernetes" {
 
 data "google_container_cluster" "this" {
   location = var.region
-  name     = "services-${var.region}-${var.zone}"
+  name     = "plt-${var.region}-${var.zone}"
   project  = local.kubernetes_project
 }
 
