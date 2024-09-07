@@ -40,7 +40,7 @@ jobs:
             DD_GIT_COMMIT_SHA=${{ github.sha }}
       registry: us-docker.pkg.dev
       service_account: plt-gke-info-github@ptl-lz-terraform-tf91-sb.iam.gserviceaccount.com
-      tags: us-docker.pkg.dev/plt-lz-services-tf7f-sb/platform-docker-standard/gke-info-go:${{ github.sha }}
+      tags: us-docker.pkg.dev/plt-lz-services-tf7f-sb/plt-docker-standard/gke-info-go:${{ github.sha }}
       workload_identity_provider: projects/746490462722/locations/global/workloadIdentityPools/github-actions/providers/github-actions-oidc
 
   us_east1_b:
