@@ -2,7 +2,7 @@ apiVersion: v3
 kind: service
 metadata:
   name: gke-info-go
-  description: An example Go application that shows information about the Google Kubernetes Engine (GKE) cluster.
+  description: An example Go application that shows metadata about the Google Kubernetes Engine (GKE) cluster.
   displayName: GKE Info Go
 
   links:
@@ -73,7 +73,8 @@ spec:
 datadog:
   performanceData:
     tags:
-      - 'service:gke-info-go'
+      - service:gke-info-go
+
   pipelines:
     fingerprints:
       - NabNkdMuNLxT
