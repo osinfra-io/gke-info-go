@@ -44,7 +44,7 @@ paths:
               - cluster-name
               - cluster-location
               - instance-zone
-              
+
       responses:
         '200':
           description: Metadata fetched successfully
