@@ -82,7 +82,7 @@ resource "datadog_synthetics_test" "this" {
 
   locations = each.value.locations
   message   = each.value.message
-  name      = "${each.value.name} region:${each.value.region} env:${var.environment}"
+  name      = "${each.value.name} region: ${each.value.region} env: ${var.environment}"
 
   options_list {
     tick_every = 300
