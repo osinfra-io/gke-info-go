@@ -52,7 +52,7 @@ provider "kubernetes" {
 
 data "google_container_cluster" "this" {
   location = var.region
-  name     = "services-${var.region}-${var.zone}"
+  name     = "plt-${var.region}-${var.zone}"
   project  = local.kubernetes_project
 }
 
@@ -82,7 +82,7 @@ resource "datadog_synthetics_test" "this" {
 
   locations = each.value.locations
   message   = each.value.message
-  name      = "${each.value.name} on - region:${each.value.region} env:${var.environment}"
+  name      = "${each.value.name} ${each.value.region} ${var.environment}"
 
   options_list {
     tick_every = 300
@@ -216,12 +216,12 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
 
           resources {
             requests = {
-              cpu    = "50m"
-              memory = "128Mi"
+              cpu    = "100m"
+              memory = "64Mi"
             }
             limits = {
-              cpu    = "100m"
-              memory = "256Mi"
+              cpu    = "200m"
+              memory = "128Mi"
             }
           }
 

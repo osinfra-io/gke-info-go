@@ -68,8 +68,14 @@ locals {
     }
   } : {}
 
-  env = var.environment == "sandbox" ? "sb" : var.environment == "non-production" ? "non-prod" : var.environment == "production" ? "prod" : "none"
+  env_map = {
+    "sandbox"        = "sb"
+    "non-production" = "non-prod"
+    "production"     = "prod"
+  }
 
-  registry           = var.environment == "sandbox" ? "us-docker.pkg.dev/plt-lz-services-tf7f-sb/platform-docker-virtual" : "us-docker.pkg.dev/plt-lz-services-tf79-prod/platform-docker-virtual"
+  env = lookup(local.env_map, var.environment, "none")
+
+  registry           = var.environment == "sandbox" ? "us-docker.pkg.dev/plt-lz-services-tf7f-sb/plt-docker-virtual" : "us-docker.pkg.dev/plt-lz-services-tf79-prod/plt-docker-virtual"
   kubernetes_project = var.environment == "sandbox" ? "plt-k8s-tf39-sb" : var.environment == "production" ? "plt-k8s-tf10-prod" : "plt-k8s-tf33-nonprod"
 }

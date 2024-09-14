@@ -25,7 +25,7 @@ func main() {
 
     observability.InfoWithContext(ctx, "Application is starting")
 
-    tracer.Start()
+    tracer.Start(tracer.WithRuntimeMetrics())
     defer tracer.Stop()
 
     err := profiler.Start(
