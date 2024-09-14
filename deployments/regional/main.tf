@@ -216,11 +216,11 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
 
           resources {
             requests = {
-              cpu    = "25m"
+              cpu    = "100m"
               memory = "64Mi"
             }
             limits = {
-              cpu    = "50m"
+              cpu    = "200m"
               memory = "128Mi"
             }
           }
