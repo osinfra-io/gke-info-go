@@ -49,6 +49,6 @@ require (
 require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
-	gopkg.in/DataDog/dd-trace-go.v1 v1.67.1
+	gopkg.in/DataDog/dd-trace-go.v1 v1.68.0
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
