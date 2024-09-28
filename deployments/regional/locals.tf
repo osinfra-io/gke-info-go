@@ -70,7 +70,7 @@ locals {
 
   env_map = {
     "sandbox"        = "sb"
-    "non-production" = "non-prod"
+    "non-production" = "nonprod"
     "production"     = "prod"
   }
 
