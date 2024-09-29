@@ -68,12 +68,12 @@ spec:
     - go
 
   dependsOn:
-    - service:istio-gateway
+    - 'service:istio-gateway'
 
 datadog:
   performanceData:
     tags:
-      - service:gke-info-go
+      - 'service:gke-info-go'
 
   pipelines:
     fingerprints:
