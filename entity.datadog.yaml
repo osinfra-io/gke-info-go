@@ -6,7 +6,7 @@ metadata:
   displayName: gke-info-go
 
   links:
-    - name: docs.osinfra.io
+    - name: gke-info-go
       type: repo
       provider: Github
       url: "https://github.com/osinfra-io/gke-info-go"
