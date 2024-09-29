@@ -6,44 +6,44 @@ metadata:
   displayName: gke-info-go
 
   links:
-    - name: GitHub
+    - name: docs.osinfra.io
       type: repo
       provider: Github
       url: "https://github.com/osinfra-io/gke-info-go"
 
-    - name: Sandbox
+    - name: sb.gcp.osinfra.io
       type: other
       url: "https://sb.gcp.osinfra.io/gke-info-go/health"
 
-    - name: "Sandbox: us-east1-b"
+    - name: us-east1-b.sb.gcp.osinfra.io
       type: other
       url: "https://us-east1-b.sb.gcp.osinfra.io/gke-info-go/health"
 
-    - name: "Sandbox: us-east4-a"
+    - name: us-east4-a.sb.gcp.osinfra.io
       type: other
       url: "https://us-east4-a.sb.gcp.osinfra.io/gke-info-go/health"
 
-    - name: Non-Production
+    - name: nonprod.gcp.osinfra.io
       type: other
       url: "https://nonprod.gcp.osinfra.io/gke-info-go/health"
 
-    - name: "Non-Production: us-east1-b"
+    - name: us-east1-b.nonprod.gcp.osinfra.io
       type: other
       url: "https://us-east1-b.nonprod.gcp.osinfra.io/gke-info-go/health"
 
-    - name: "Non-Production: us-east4-a"
+    - name: us-east4-a.nonprod.gcp.osinfra.io
       type: other
       url: "https://us-east4-a.nonprod.gcp.osinfra.io/gke-info-go/health"
 
-    - name: Production
+    - name: gcp.osinfra.io
       type: other
       url: "https://gcp.osinfra.io/gke-info-go/health"
 
-    - name: "Production: us-east1-b"
+    - name: us-east1-b.gcp.osinfra.io
       type: other
       url: "https://us-east1-b.gcp.osinfra.io/gke-info-go/health"
 
-    - name: "Production: us-east4-a"
+    - name: us-east4-a.gcp.osinfra.io
       type: other
       url: "https://us-east4-a.gcp.osinfra.io/gke-info-go/health"
 
