@@ -3,7 +3,7 @@ kind: service
 metadata:
   name: gke-info-go
   description: An example Go application that shows metadata about the Google Kubernetes Engine (GKE) cluster.
-  displayName: GKE Info Go
+  displayName: gke-info-go
 
   links:
     - name: Gitbook
