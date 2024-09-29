@@ -6,11 +6,6 @@ metadata:
   displayName: gke-info-go
 
   links:
-    - name: Gitbook
-      type: doc
-      provider: Gitbook
-      url: "https://docs.osinfra.io/product-guides/google-cloud-platform/kubernetes"
-
     - name: GitHub
       type: repo
       provider: Github
@@ -28,17 +23,17 @@ metadata:
       type: other
       url: "https://us-east4-a.sb.gcp.osinfra.io/gke-info-go/health"
 
-    - name: Pre-Production
+    - name: Non-Production
       type: other
-      url: "https://pre-prod.gcp.osinfra.io/gke-info-go/health"
+      url: "https://nonprod.gcp.osinfra.io/gke-info-go/health"
 
-    - name: "Pre-Production: us-east1-b"
+    - name: "Non-Production: us-east1-b"
       type: other
-      url: "https://us-east1-b.pre-prod.gcp.osinfra.io/gke-info-go/health"
+      url: "https://us-east1-b.nonprod.gcp.osinfra.io/gke-info-go/health"
 
-    - name: "Pre-Production: us-east4-a"
+    - name: "Non-Production: us-east4-a"
       type: other
-      url: "https://us-east4-a.pre-prod.gcp.osinfra.io/gke-info-go/health"
+      url: "https://us-east4-a.nonprod.gcp.osinfra.io/gke-info-go/health"
 
     - name: Production
       type: other
