@@ -46,7 +46,7 @@ resource "datadog_synthetics_test" "this" {
   tags = [
     "env:${module.helpers.environment}",
     "service:${each.value.service}",
-    "region:${module.helpers.region}",
+    "region:${each.value.region}",
     "team:${module.helpers.team}"
   ]
 
