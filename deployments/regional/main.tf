@@ -1,67 +1,3 @@
-# Required Providers
-# https://www.terraform.io/docs/language/providers/requirements.html#requiring-providers
-
-terraform {
-  required_providers {
-    # Datadog Provider
-    # https://registry.terraform.io/providers/DataDog/datadog/latest/docs
-
-    datadog = {
-      source = "datadog/datadog"
-    }
-
-    # Google Cloud Provider
-    # https://www.terraform.io/docs/providers/google/index.html
-
-    google = {
-      source = "hashicorp/google"
-    }
-
-    # Kubernetes Provider
-    # https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs
-
-    kubernetes = {
-      source = "hashicorp/kubernetes"
-    }
-  }
-}
-
-# Datadog Provider
-# https://registry.terraform.io/providers/DataDog/datadog/latest/docs
-
-provider "datadog" {
-  api_key = var.datadog_api_key
-  app_key = var.datadog_app_key
-}
-
-# Kubernetes Provider
-# https://registry.terraform.io/providers/hashicorp/kubernetes/latest
-
-provider "kubernetes" {
-
-  cluster_ca_certificate = base64decode(
-    data.google_container_cluster.this.master_auth[0].cluster_ca_certificate
-  )
-
-  host  = "https://${data.google_container_cluster.this.endpoint}"
-  token = data.google_client_config.current.access_token
-}
-
-# Google Container Cluster Data Source
-# https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/container_cluster
-
-data "google_container_cluster" "this" {
-  location = var.region
-  name     = "plt-${var.region}-${var.zone}"
-  project  = local.kubernetes_project
-}
-
-# Google Client Config Data Source
-# https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/client_config
-
-data "google_client_config" "current" {
-}
-
 # Datadog Synthetics Test Resource
 # https://registry.terraform.io/providers/DataDog/datadog/latest/docs/resources/synthetics_test
 
@@ -82,7 +18,7 @@ resource "datadog_synthetics_test" "this" {
 
   locations = each.value.locations
   message   = each.value.message
-  name      = "${each.value.name} ${each.value.region} ${var.environment}"
+  name      = "${each.value.name} ${each.value.region} ${module.helpers.environment}"
 
   options_list {
     tick_every = 300
@@ -108,10 +44,10 @@ resource "datadog_synthetics_test" "this" {
   subtype = "http"
 
   tags = [
-    "env:${var.environment}",
+    "env:${module.helpers.environment}",
     "service:${each.value.service}",
-    "region:${each.value.region}",
-    "team:platform-google-cloud-kubernetes"
+    "region:${module.helpers.region}",
+    "team:${module.helpers.team}"
   ]
 
   type = "api"
@@ -140,7 +76,7 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
 
   metadata {
     labels = {
-      "tags.datadoghq.com/env"     = var.environment
+      "tags.datadoghq.com/env"     = module.helpers.environment
       "tags.datadoghq.com/service" = "gke-info-go"
       "tags.datadoghq.com/version" = var.gke_info_go_version
     }
@@ -162,18 +98,17 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
       metadata {
         annotations = {
           "apm.datadoghq.com/env" = jsonencode({
-            "DD_ENV"     = var.environment
+            "DD_ENV"     = module.helpers.environment
             "DD_SERVICE" = "gke-info-go"
             "DD_VERSION" = var.gke_info_go_version
           })
-          "proxy.istio.io/config" = "tracing: {}"
         }
 
         labels = {
           # Enable Admission Controller to mutate new pods part of this deployment
           "admission.datadoghq.com/enabled" = "true"
           "app"                             = "gke-info-go"
-          "tags.datadoghq.com/env"          = var.environment
+          "tags.datadoghq.com/env"          = module.helpers.environment
           "tags.datadoghq.com/service"      = "gke-info-go"
           "tags.datadoghq.com/version"      = var.gke_info_go_version
         }
@@ -216,12 +151,12 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
 
           resources {
             requests = {
-              cpu    = "100m"
-              memory = "64Mi"
+              cpu    = "10m"
+              memory = "32Mi"
             }
             limits = {
-              cpu    = "200m"
-              memory = "128Mi"
+              cpu    = "20m"
+              memory = "64Mi"
             }
           }
 
@@ -348,7 +283,7 @@ resource "kubernetes_service_v1" "gke_info_go" {
 
 resource "kubernetes_service_v1" "gke_info_go_regional" {
   metadata {
-    name      = "gke-info-go-${var.region}-${var.zone}"
+    name      = "gke-info-go-${module.helpers.region}-${module.helpers.zone}"
     namespace = "gke-info"
   }
 
