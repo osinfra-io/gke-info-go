@@ -1,0 +1,28 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: gke-info-go
+  description: An example Go application that shows metadata about the Google Kubernetes Engine (GKE) cluster.
+  title: gke-info-go
+  annotations:
+    github.com/project-slug: osinfra-io/gke-info-go
+  links:
+    - url: https://github.com/osinfra-io/gke-info-go
+      title: Source Code
+      type: repo
+      icon: github
+    - url: https://sb.gcp.osinfra.io/gke-info-go/health
+      title: sb.gcp.osinfra.io
+    - url: https://us-east1-b.sb.gcp.osinfra.io/gke-info-go/health
+      title: us-east1-b.sb.gcp.osinfra.io
+    - url: https://us-east4-a.sb.gcp.osinfra.io/gke-info-go/health
+      title: us-east4-a.sb.gcp.osinfra.io
+    - url: https://nonprod.gcp.osinfra.io/gke-info-go/health
+      title: nonprod.gcp.osinfra.io
+    - url: https://us-east1-b.nonprod.gcp.osinfra.io/gke-info-go/health
+      title: us-east1-b.nonprod.gcp.osinfra.io
+
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-google-cloud-kubernetes
