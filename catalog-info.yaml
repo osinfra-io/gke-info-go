@@ -6,21 +6,42 @@ metadata:
   title: gke-info-go
   annotations:
     github.com/project-slug: osinfra-io/gke-info-go
+  tags:
+    - go
   links:
     - url: https://github.com/osinfra-io/gke-info-go
-      title: Source Code
-      type: repo
+      title: osinfra-io/gke-info-go
       icon: github
     - url: https://sb.gcp.osinfra.io/gke-info-go/health
       title: sb.gcp.osinfra.io
+      icon: link
     - url: https://us-east1-b.sb.gcp.osinfra.io/gke-info-go/health
       title: us-east1-b.sb.gcp.osinfra.io
+      icon: link
     - url: https://us-east4-a.sb.gcp.osinfra.io/gke-info-go/health
       title: us-east4-a.sb.gcp.osinfra.io
+      icon: link
     - url: https://nonprod.gcp.osinfra.io/gke-info-go/health
       title: nonprod.gcp.osinfra.io
+      icon: link
     - url: https://us-east1-b.nonprod.gcp.osinfra.io/gke-info-go/health
       title: us-east1-b.nonprod.gcp.osinfra.io
+      icon: link
+    - url: https://us-east4-a.nonprod.gcp.osinfra.io/gke-info-go/health
+      title: us-east4-a.nonprod.gcp.osinfra.io
+      icon: link
+    - url: https://gcp.osinfra.io/gke-info-go/health
+      title: gcp.osinfra.io
+      icon: link
+    - url: https://us-east1-b.gcp.osinfra.io/gke-info-go/health
+      title: us-east1-b.gcp.osinfra.io
+      icon: link
+    - url: https://us-east4-a.gcp.osinfra.io/gke-info-go/health
+      title: us-east4-a.gcp.osinfra.io
+      icon: link
+    - url: https://mail.google.com/chat/u/0/#chat/space/AAAA1mERq4Q
+      title: google-chat
+      icon: chat
 
 spec:
   type: service
