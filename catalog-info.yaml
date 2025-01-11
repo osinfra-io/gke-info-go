@@ -9,10 +9,6 @@ metadata:
   tags:
     - go
   links:
-    - url: https://github.com/osinfra-io/gke-info-go
-      title: osinfra-io/gke-info-go
-      icon: github
-
     - url: https://discord.gg/JHXBXkkpqK
       title: discord
       icon: chat
