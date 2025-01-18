@@ -1,4 +1,4 @@
-# <img align="left" width="45" height="45" src="https://github.com/user-attachments/assets/ce1fe535-f4f3-451f-bbd9-45fde04c000c">Istio Test
+# <img align="left" width="45" height="45" alt="Istio Test Logo" src="https://github.com/user-attachments/assets/ce1fe535-f4f3-451f-bbd9-45fde04c000c">Istio Test
 
 An example Istio test application that shows information about the Google Kubernetes Engine (GKE) cluster.
 
