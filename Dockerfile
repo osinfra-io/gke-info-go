@@ -5,8 +5,8 @@ FROM golang:1.23-alpine
 
 # Create a non-root user for security purposes
 
-RUN addgroup -S gke-info && adduser -S gke-info -G gke-info
-USER gke-info
+RUN addgroup -S istio-test && adduser -S istio-test -G istio-test
+USER istio-test
 
 ARG DD_GIT_REPOSITORY_URL
 ARG DD_GIT_COMMIT_SHA

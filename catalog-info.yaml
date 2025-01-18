@@ -1,11 +1,11 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: gke-info-go
+  name: istio-test
   description: An example Go application that shows metadata about the Google Kubernetes Engine (GKE) cluster.
-  title: gke-info-go
+  title: istio-test
   annotations:
-    github.com/project-slug: osinfra-io/gke-info-go
+    github.com/project-slug: osinfra-io/istio-test
   tags:
     - go
   links:
