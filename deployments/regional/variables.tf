@@ -8,13 +8,13 @@ variable "datadog_app_key" {
   type        = string
 }
 
-variable "gke_info_go_replicas" {
-  description = "The number of replicas for the gke-info deployment"
+variable "istio_test_replicas" {
+  description = "The number of replicas for the istio-test deployment"
   type        = number
   default     = 1
 }
 
-variable "gke_info_go_version" {
-  description = "The version of the gke-info deployment"
+variable "istio_test_version" {
+  description = "The version of the istio-test deployment"
   type        = string
 }

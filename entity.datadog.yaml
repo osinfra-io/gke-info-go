@@ -1,51 +1,51 @@
 apiVersion: v3
 kind: service
 metadata:
-  name: gke-info-go
-  description: An example Go application that shows metadata about the Google Kubernetes Engine (GKE) cluster.
-  displayName: gke-info-go
+  name: istio-test
+  description: An example Istio test application that shows metadata about the Google Kubernetes Engine (GKE) cluster.
+  displayName: istio-test
 
   links:
-    - name: gke-info-go
+    - name: istio-test
       type: repo
       provider: Github
-      url: "https://github.com/osinfra-io/gke-info-go"
+      url: "https://github.com/osinfra-io/istio-test"
 
     - name: sb.gcp.osinfra.io
       type: other
-      url: "https://sb.gcp.osinfra.io/gke-info-go/health"
+      url: "https://sb.gcp.osinfra.io/istio-test/health"
 
     - name: us-east1-b.sb.gcp.osinfra.io
       type: other
-      url: "https://us-east1-b.sb.gcp.osinfra.io/gke-info-go/health"
+      url: "https://us-east1-b.sb.gcp.osinfra.io/istio-test/health"
 
     - name: us-east4-a.sb.gcp.osinfra.io
       type: other
-      url: "https://us-east4-a.sb.gcp.osinfra.io/gke-info-go/health"
+      url: "https://us-east4-a.sb.gcp.osinfra.io/istio-test/health"
 
     - name: nonprod.gcp.osinfra.io
       type: other
-      url: "https://nonprod.gcp.osinfra.io/gke-info-go/health"
+      url: "https://nonprod.gcp.osinfra.io/istio-test/health"
 
     - name: us-east1-b.nonprod.gcp.osinfra.io
       type: other
-      url: "https://us-east1-b.nonprod.gcp.osinfra.io/gke-info-go/health"
+      url: "https://us-east1-b.nonprod.gcp.osinfra.io/istio-test/health"
 
     - name: us-east4-a.nonprod.gcp.osinfra.io
       type: other
-      url: "https://us-east4-a.nonprod.gcp.osinfra.io/gke-info-go/health"
+      url: "https://us-east4-a.nonprod.gcp.osinfra.io/istio-test/health"
 
     - name: gcp.osinfra.io
       type: other
-      url: "https://gcp.osinfra.io/gke-info-go/health"
+      url: "https://gcp.osinfra.io/istio-test/health"
 
     - name: us-east1-b.gcp.osinfra.io
       type: other
-      url: "https://us-east1-b.gcp.osinfra.io/gke-info-go/health"
+      url: "https://us-east1-b.gcp.osinfra.io/istio-test/health"
 
     - name: us-east4-a.gcp.osinfra.io
       type: other
-      url: "https://us-east4-a.gcp.osinfra.io/gke-info-go/health"
+      url: "https://us-east4-a.gcp.osinfra.io/istio-test/health"
 
   contacts:
     - type: email
@@ -68,7 +68,7 @@ spec:
 datadog:
   performanceData:
     tags:
-      - 'service:gke-info-go'
+      - 'service:istio-test'
 
   pipelines:
     fingerprints:

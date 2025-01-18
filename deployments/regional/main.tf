@@ -61,7 +61,7 @@ resource "datadog_synthetics_test" "this" {
 # This is a simple deployment that is used to get cluster status information and test end-to-end connectivity to the cluster
 # through Datadog synthetic tests.
 
-resource "kubernetes_deployment_v1" "gke_info_go" {
+resource "kubernetes_deployment_v1" "istio_test" {
   # Minimize the admission of containers with the NET_RAW capability
   # checkov:skip=CKV_K8S_28: This needs some additional investigation
 
@@ -77,20 +77,20 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
   metadata {
     labels = {
       "tags.datadoghq.com/env"     = module.helpers.environment
-      "tags.datadoghq.com/service" = "gke-info-go"
-      "tags.datadoghq.com/version" = var.gke_info_go_version
+      "tags.datadoghq.com/service" = "istio-test"
+      "tags.datadoghq.com/version" = var.istio_test_version
     }
 
-    name      = "gke-info-go"
-    namespace = "gke-info"
+    name      = "istio-test"
+    namespace = "istio-test"
   }
 
   spec {
-    replicas = var.gke_info_go_replicas
+    replicas = var.istio_test_replicas
 
     selector {
       match_labels = {
-        "app" = "gke-info-go"
+        "app" = "istio-test"
       }
     }
 
@@ -99,18 +99,18 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
         annotations = {
           "apm.datadoghq.com/env" = jsonencode({
             "DD_ENV"     = module.helpers.environment
-            "DD_SERVICE" = "gke-info-go"
-            "DD_VERSION" = var.gke_info_go_version
+            "DD_SERVICE" = "istio-test"
+            "DD_VERSION" = var.istio_test_version
           })
         }
 
         labels = {
           # Enable Admission Controller to mutate new pods part of this deployment
           "admission.datadoghq.com/enabled" = "true"
-          "app"                             = "gke-info-go"
+          "app"                             = "istio-test"
           "tags.datadoghq.com/env"          = module.helpers.environment
-          "tags.datadoghq.com/service"      = "gke-info-go"
-          "tags.datadoghq.com/version"      = var.gke_info_go_version
+          "tags.datadoghq.com/service"      = "istio-test"
+          "tags.datadoghq.com/version"      = var.istio_test_version
         }
       }
 
@@ -145,8 +145,8 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
             }
           }
 
-          name              = "gke-info-go"
-          image             = "${local.registry}/gke-info-go:${var.gke_info_go_version}"
+          name              = "istio-test"
+          image             = "${local.registry}/istio-test:${var.istio_test_version}"
           image_pull_policy = "Always"
 
           resources {
@@ -166,7 +166,7 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
 
           liveness_probe {
             http_get {
-              path = "/gke-info-go/health"
+              path = "/istio-test/health"
               port = "8080"
             }
 
@@ -178,7 +178,7 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
 
           readiness_probe {
             http_get {
-              path = "/gke-info-go/health"
+              path = "/istio-test/health"
               port = "8080"
             }
 
@@ -192,7 +192,7 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
         topology_spread_constraint {
           label_selector {
             match_labels = {
-              "app" = "gke-info-go"
+              "app" = "istio-test"
             }
           }
 
@@ -208,14 +208,14 @@ resource "kubernetes_deployment_v1" "gke_info_go" {
 # Kubernetes Manifest Resource
 # https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest
 
-resource "kubernetes_manifest" "gke_info_go" {
+resource "kubernetes_manifest" "istio_test" {
   manifest = {
     apiVersion = "security.istio.io/v1"
     kind       = "AuthorizationPolicy"
 
     metadata = {
-      name      = "gke-info-go"
-      namespace = "gke-info"
+      name      = "istio-test"
+      namespace = "istio-test"
     }
 
     spec = {
@@ -238,10 +238,10 @@ resource "kubernetes_manifest" "gke_info_go" {
                 # The authorization policy below uses the ALLOW-with-positive-matching pattern to allow requests to specific paths.
 
                 paths = [
-                  "/gke-info-go/health",
-                  "/gke-info-go/metadata/cluster-location",
-                  "/gke-info-go/metadata/cluster-name",
-                  "/gke-info-go/metadata/instance-zone"
+                  "/istio-test/health",
+                  "/istio-test/metadata/cluster-location",
+                  "/istio-test/metadata/cluster-name",
+                  "/istio-test/metadata/instance-zone"
                 ]
               }
             }
@@ -251,7 +251,7 @@ resource "kubernetes_manifest" "gke_info_go" {
 
       selector = {
         matchLabels = {
-          app = "gke-info-go"
+          app = "istio-test"
         }
       }
     }
@@ -261,16 +261,16 @@ resource "kubernetes_manifest" "gke_info_go" {
 # Kubernetes Service Resource
 # https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_v1
 
-resource "kubernetes_service_v1" "gke_info_go" {
+resource "kubernetes_service_v1" "istio_test" {
   metadata {
-    name      = "gke-info-go"
-    namespace = "gke-info"
+    name      = "istio-test"
+    namespace = "istio-test"
   }
 
   spec {
     type = "ClusterIP"
     selector = {
-      app = "gke-info-go"
+      app = "istio-test"
     }
 
     port {
@@ -281,16 +281,16 @@ resource "kubernetes_service_v1" "gke_info_go" {
   }
 }
 
-resource "kubernetes_service_v1" "gke_info_go_regional" {
+resource "kubernetes_service_v1" "istio_test_regional" {
   metadata {
-    name      = "gke-info-go-${module.helpers.region}-${module.helpers.zone}"
-    namespace = "gke-info"
+    name      = "istio-test-${module.helpers.region}-${module.helpers.zone}"
+    namespace = "istio-test"
   }
 
   spec {
     type = "ClusterIP"
     selector = {
-      app = "gke-info-go"
+      app = "istio-test"
     }
 
     port {

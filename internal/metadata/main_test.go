@@ -10,7 +10,7 @@ import (
     "testing"
 
     "github.com/stretchr/testify/assert"
-    "gke-info/internal/metadata"
+    "istio-test/internal/metadata"
 )
 
 type MockFetchMetadata struct{}
@@ -34,7 +34,7 @@ func metadataHandlerWrapper(fetcher metadata.MetadataFetcher) http.HandlerFunc {
 
 func TestMain(t *testing.T) {
     mux := http.NewServeMux()
-    mux.HandleFunc("/gke-info-go/metadata/", metadataHandlerWrapper(&MockFetchMetadata{}))
+    mux.HandleFunc("/istio-testst/metadata/", metadataHandlerWrapper(&MockFetchMetadata{}))
 
     ts := httptest.NewServer(mux)
     defer ts.Close()
@@ -48,10 +48,10 @@ func TestMain(t *testing.T) {
         expectedBody string
         isJSON       bool
     }{
-        {ts.URL + "/gke-info-go/metadata/cluster-name", http.StatusOK, `{"cluster-name":"test-cluster-name"}`, true},
-        {ts.URL + "/gke-info-go/metadata/cluster-location", http.StatusOK, `{"cluster-location":"test-cluster-location"}`, true},
-        {ts.URL + "/gke-info-go/metadata/instance-zone", http.StatusOK, `{"instance-zone":"us-central1-a"}`, true},
-        {ts.URL + "/gke-info-go/metadata/unknown", http.StatusBadRequest, "Unknown metadata type\n", false},
+        {ts.URL + "/istio-testst/metadata/cluster-name", http.StatusOK, `{"cluster-name":"test-cluster-name"}`, true},
+        {ts.URL + "/istio-testst/metadata/cluster-location", http.StatusOK, `{"cluster-location":"test-cluster-location"}`, true},
+        {ts.URL + "/istio-testst/metadata/instance-zone", http.StatusOK, `{"instance-zone":"us-central1-a"}`, true},
+        {ts.URL + "/istio-testst/metadata/unknown", http.StatusBadRequest, "Unknown metadata type\n", false},
     }
 
     // Run the test cases

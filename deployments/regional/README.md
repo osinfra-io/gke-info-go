@@ -9,9 +9,9 @@ No requirements.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_datadog"></a> [datadog](#provider\_datadog) | 3.48.1 |
-| <a name="provider_google"></a> [google](#provider\_google) | 6.11.1 |
-| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.33.0 |
+| <a name="provider_datadog"></a> [datadog](#provider\_datadog) | 3.52.1 |
+| <a name="provider_google"></a> [google](#provider\_google) | 6.16.0 |
+| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.35.1 |
 
 ## Modules
 
@@ -24,10 +24,10 @@ No requirements.
 | Name | Type |
 |------|------|
 | [datadog_synthetics_test.this](https://registry.terraform.io/providers/datadog/datadog/latest/docs/resources/synthetics_test) | resource |
-| [kubernetes_deployment_v1.gke_info_go](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/deployment_v1) | resource |
-| [kubernetes_manifest.gke_info_go](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
-| [kubernetes_service_v1.gke_info_go](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_v1) | resource |
-| [kubernetes_service_v1.gke_info_go_regional](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_v1) | resource |
+| [kubernetes_deployment_v1.istio_test](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/deployment_v1) | resource |
+| [kubernetes_manifest.istio_test](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/manifest) | resource |
+| [kubernetes_service_v1.istio_test](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_v1) | resource |
+| [kubernetes_service_v1.istio_test_regional](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_v1) | resource |
 | [google_client_config.this](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/client_config) | data source |
 | [google_container_cluster.this](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/container_cluster) | data source |
 | [google_project.this](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/project) | data source |
@@ -39,8 +39,8 @@ No requirements.
 |------|-------------|------|---------|:--------:|
 | <a name="input_datadog_api_key"></a> [datadog\_api\_key](#input\_datadog\_api\_key) | Datadog API key | `string` | n/a | yes |
 | <a name="input_datadog_app_key"></a> [datadog\_app\_key](#input\_datadog\_app\_key) | Datadog APP key | `string` | n/a | yes |
-| <a name="input_gke_info_go_replicas"></a> [gke\_info\_go\_replicas](#input\_gke\_info\_go\_replicas) | The number of replicas for the gke-info deployment | `number` | `1` | no |
-| <a name="input_gke_info_go_version"></a> [gke\_info\_go\_version](#input\_gke\_info\_go\_version) | The version of the gke-info deployment | `string` | n/a | yes |
+| <a name="input_istio_test_replicas"></a> [istio\_test\_replicas](#input\_istio\_test\_replicas) | The number of replicas for the istio-test deployment | `number` | `1` | no |
+| <a name="input_istio_test_version"></a> [istio\_test\_version](#input\_istio\_test\_version) | The version of the istio-test deployment | `string` | n/a | yes |
 
 ## Outputs
 

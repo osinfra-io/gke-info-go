@@ -9,8 +9,8 @@ import (
 	"syscall"
 	"time"
 
-	"gke-info/internal/metadata"
-	"gke-info/internal/observability"
+	"istio-test/internal/metadata"
+	"istio-test/internal/observability"
 
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 	"gopkg.in/DataDog/dd-trace-go.v1/profiler"
@@ -40,8 +40,8 @@ func main() {
     defer profiler.Stop()
 
     mux := httptrace.NewServeMux()
-    mux.HandleFunc("/gke-info-go/metadata/", metadata.MetadataHandler(metadata.FetchMetadata))
-    mux.HandleFunc("/gke-info-go/health", metadata.HealthCheckHandler)
+    mux.HandleFunc("/istio-testst/metadata/", metadata.MetadataHandler(metadata.FetchMetadata))
+    mux.HandleFunc("/istio-testst/health", metadata.HealthCheckHandler)
     mux.HandleFunc("/", metadata.NotFoundHandler)
 
     port := "8080"

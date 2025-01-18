@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"gke-info/internal/observability"
+	"istio-test/internal/observability"
 )
 
 const (
@@ -65,7 +65,7 @@ func MetadataHandler(fetchMetadataFunc func(ctx context.Context, url string) (st
 		pathParts := strings.Split(r.URL.Path, "/")
 		if len(pathParts) != 4 {
 			observability.ErrorWithContext(r.Context(), fmt.Sprintf("Invalid request: %s", r.URL.Path))
-			http.Error(w, "Invalid request: expected /gke-info-go/metadata/{type}", http.StatusBadRequest)
+			http.Error(w, "Invalid request: expected /istio-testst/metadata/{type}", http.StatusBadRequest)
 			return
 		}
 

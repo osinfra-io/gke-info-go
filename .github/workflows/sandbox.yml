@@ -39,8 +39,8 @@ jobs:
             DD_GIT_REPOSITORY_URL=https://github.com/${{ github.repository }}
             DD_GIT_COMMIT_SHA=${{ github.sha }}
       registry: us-docker.pkg.dev
-      service_account: plt-gke-info-github@plt-lz-terraform-tf00-sb.iam.gserviceaccount.com
-      tags: us-docker.pkg.dev/plt-lz-services-tf7f-sb/plt-docker-standard/gke-info-go:${{ github.sha }}
+      service_account: plt-istio-test-github@plt-lz-terraform-tf00-sb.iam.gserviceaccount.com
+      tags: us-docker.pkg.dev/plt-lz-services-tf7f-sb/plt-docker-standard/istio-test:${{ github.sha }}
       workload_identity_provider: projects/746490462722/locations/global/workloadIdentityPools/github-actions/providers/github-actions-oidc
 
   us_east1_b:
@@ -52,9 +52,9 @@ jobs:
       checkout_ref: ${{ github.ref }}
       environment: us-east1-b-sandbox
       github_environment: "Sandbox: Regional - us-east1-b"
-      service_account: plt-gke-info-github@plt-lz-terraform-tf00-sb.iam.gserviceaccount.com
-      terraform_plan_args: -var-file=tfvars/us-east1-b-sandbox.tfvars -var=gke_info_go_version=${{ github.sha }}
-      terraform_state_bucket: plt-gke-info-4312-sb
+      service_account: plt-istio-test-github@plt-lz-terraform-tf00-sb.iam.gserviceaccount.com
+      terraform_plan_args: -var-file=tfvars/us-east1-b-sandbox.tfvars -var=istio_test_version=${{ github.sha }}
+      terraform_state_bucket: plt-istio-test-4312-sb
       terraform_version: ${{ vars.TERRAFORM_VERSION }}
       terraform_workspace: us-east1-b-sandbox
       working_directory: deployments/regional
@@ -75,9 +75,9 @@ jobs:
       checkout_ref: ${{ github.ref }}
       environment: us-east4-a-sandbox
       github_environment: "Sandbox: Regional - us-east4-a"
-      service_account: plt-gke-info-github@plt-lz-terraform-tf00-sb.iam.gserviceaccount.com
-      terraform_plan_args: -var-file=tfvars/us-east4-a-sandbox.tfvars -var=gke_info_go_version=${{ github.sha }}
-      terraform_state_bucket: plt-gke-info-4312-sb
+      service_account: plt-istio-test-github@plt-lz-terraform-tf00-sb.iam.gserviceaccount.com
+      terraform_plan_args: -var-file=tfvars/us-east4-a-sandbox.tfvars -var=istio_test_version=${{ github.sha }}
+      terraform_state_bucket: plt-istio-test-4312-sb
       terraform_version: ${{ vars.TERRAFORM_VERSION }}
       terraform_workspace: us-east4-a-sandbox
       working_directory: deployments/regional
@@ -104,4 +104,4 @@ jobs:
           api_key: ${{ secrets.DATADOG_API_KEY }}
           app_key: ${{ secrets.DATADOG_APP_KEY }}
           fail_on_critical_errors: true
-          test_search_query: "env:sandbox service:gke-info-go team:platform-google-cloud-kubernetes state:live"
+          test_search_query: "env:sandbox service:istio-test team:platform-google-cloud-kubernetes state:live"
