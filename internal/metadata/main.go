@@ -21,41 +21,42 @@ const (
 type MetadataFetcher interface {
 	FetchMetadata(ctx context.Context, url string) (string, error)
 }
+
 var httpClient = &http.Client{Timeout: 10 * time.Second}
 
 func FetchMetadata(ctx context.Context, url string) (string, error) {
-    req, err := http.NewRequest("GET", url, nil)
-    if err != nil {
-        return "", fmt.Errorf("error creating request: %w", err)
-    }
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return "", fmt.Errorf("error creating request: %w", err)
+	}
 
-    req.Header.Add("Metadata-Flavor", "Google")
+	req.Header.Add("Metadata-Flavor", "Google")
 
-    resp, err := httpClient.Do(req)
-    if err != nil {
-        return "", fmt.Errorf("error executing request: %w", err)
-    }
-    defer resp.Body.Close()
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("error executing request: %w", err)
+	}
+	defer resp.Body.Close()
 
-    if resp.StatusCode != http.StatusOK {
-        body, _ := io.ReadAll(resp.Body)
-        return "", fmt.Errorf("failed to get metadata from %s, status code: %d, response: %s", url, resp.StatusCode, string(body))
-    }
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return "", fmt.Errorf("failed to get metadata from %s, status code: %d, response: %s", url, resp.StatusCode, string(body))
+	}
 
-    metadata, err := io.ReadAll(resp.Body)
-    if err != nil {
-        return "", fmt.Errorf("error reading response body: %w", err)
-    }
+	metadata, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("error reading response body: %w", err)
+	}
 
-    return string(metadata), nil
+	return string(metadata), nil
 }
 
 func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
-    w.WriteHeader(http.StatusOK)
-    if _, err := w.Write([]byte("OK")); err != nil {
-        observability.ErrorWithContext(r.Context(), fmt.Sprintf("Error writing response: %v", err))
-        http.Error(w, "Failed to write response", http.StatusInternalServerError)
-    }
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write([]byte("OK")); err != nil {
+		observability.ErrorWithContext(r.Context(), fmt.Sprintf("Error writing response: %v", err))
+		http.Error(w, "Failed to write response", http.StatusInternalServerError)
+	}
 }
 
 func MetadataHandler(fetchMetadataFunc func(ctx context.Context, url string) (string, error)) http.HandlerFunc {
@@ -65,7 +66,7 @@ func MetadataHandler(fetchMetadataFunc func(ctx context.Context, url string) (st
 		pathParts := strings.Split(r.URL.Path, "/")
 		if len(pathParts) != 4 {
 			observability.ErrorWithContext(r.Context(), fmt.Sprintf("Invalid request: %s", r.URL.Path))
-			http.Error(w, "Invalid request: expected /istio-testst/metadata/{type}", http.StatusBadRequest)
+			http.Error(w, "Invalid request: expected /istio-test/metadata/{type}", http.StatusBadRequest)
 			return
 		}
 
